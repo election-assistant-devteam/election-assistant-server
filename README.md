@@ -1,2 +1,1 @@
 # election-assistant-server
-test
