@@ -7,6 +7,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Builder
+@Table(name = "users")
 @Entity
 @SQLDelete(sql = "UPDATE user SET status='N' where id = ?")
 @SQLRestriction("status = 'Y'")
