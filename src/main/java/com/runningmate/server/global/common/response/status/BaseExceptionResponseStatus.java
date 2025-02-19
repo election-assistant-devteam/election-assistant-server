@@ -10,6 +10,11 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
 
     UNATHORIZED_USER(40100,  "권한이 없는 사용자의 요청입니다."),
 
+    // 유저 관련 에러
+    SAME_USERNAME_EXISTS(40000, "동일한 아이디를 가진 사용자가 존재합니다."),
+    SAME_USER_EMAIL_EXISTS(40000, "동일한 이메일을 가진 사용자가 존재합니다."),
+    SAME_USER_INFO_EXISTS(40000, "동일한 정보로 가입한 유저가 존재합니다."),
+
     INTERNAL_SERVER_ERROR(50000, "서버 내부 오류입니다.");
 
     private final boolean success = false;
