@@ -1,5 +1,6 @@
 package com.runningmate.server.domain.auth.dto;
 
+import com.runningmate.server.domain.user.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,4 +16,14 @@ public class LoginResponse {
     private String nickname;
     private String politicianOfInterest;
     private String partyOfInterest;
+
+    public static LoginResponse from(String accessToken, String refreshToken, User user) {
+        return LoginResponse.builder()
+                .access(accessToken)
+                .refresh(refreshToken)
+                .nickname(user.getNickname())
+                .politicianOfInterest(user.getPoliticianOfInterest())
+                .partyOfInterest(user.getPartyOfInterest())
+                .build();
+    }
 }
