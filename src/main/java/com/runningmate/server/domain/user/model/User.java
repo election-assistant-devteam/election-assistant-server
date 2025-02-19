@@ -2,10 +2,16 @@ package com.runningmate.server.domain.user.model;
 
 import com.runningmate.server.global.common.model.BaseEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Table(name = "users")
 @Entity
@@ -27,4 +33,8 @@ public class User extends BaseEntity {
     private String partyOfInterest;
     @Column(length = 100)
     private String politicianOfInterest;
+
+    public boolean hasSamePassword(String password) {
+        return this.password.equals(password);
+    }
 }
