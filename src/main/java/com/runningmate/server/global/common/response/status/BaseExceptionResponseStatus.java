@@ -23,7 +23,13 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
     SAME_USER_EMAIL_EXISTS(40000, "동일한 이메일을 가진 사용자가 존재합니다."),
     SAME_USER_INFO_EXISTS(40000, "동일한 정보로 가입한 유저가 존재합니다."),
 
+    // 외부 api json 파싱 실패
+    PARSING_FAILED(50000, "외부 api JSON 파싱에 실패하였습니다."),
+
     INTERNAL_SERVER_ERROR(50000, "서버 내부 오류입니다.");
+
+    // 외부 api 파싱 에러
+
 
     private final boolean success = false;
     private final int code;
