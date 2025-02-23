@@ -2,14 +2,18 @@ package com.runningmate.server.domain.politicians.service;
 
 import com.runningmate.server.domain.politicians.dto.external.candidateinfo.CandidateItem;
 import com.runningmate.server.domain.politicians.dto.external.electioncode.ElectionCodeItem;
+import com.runningmate.server.domain.politicians.model.Politician;
+import com.runningmate.server.domain.politicians.model.PoliticianDetail;
+import com.runningmate.server.domain.politicians.repository.PoliticianDetailRepository;
+import com.runningmate.server.domain.politicians.repository.PoliticianRepository;
 import com.runningmate.server.domain.politicians.utils.CandidateUtil;
 import com.runningmate.server.domain.politicians.utils.ElectionCodeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -18,6 +22,9 @@ public class PoliticianInfoService {
 
     private final ElectionCodeUtil electionCodeUtil;
     private final CandidateUtil candidateUtil;
+    private final PoliticianRepository politicianRepository;
+    private final PoliticianDetailRepository politicianDetailRepository;
+
 
     public void savePoliticianInfos() {
         // 선거 코드 가져오기
@@ -32,5 +39,14 @@ public class PoliticianInfoService {
         // 선거 Id와 선거 종류 코드로 후보자 정보 가져오기
         List<CandidateItem> allCandidateItems = candidateUtil.fetchCandidateInfo(filteredByNationalAndYear);
         log.info("allCandidateItems {}", allCandidateItems.size());
+
+        // DB 저장
+        int num = 1; // 임시로 넣음
+        for (CandidateItem allCandidateItem : allCandidateItems) {
+            Politician politician = Politician.from(allCandidateItem);
+            PoliticianDetail politicianDetail = PoliticianDetail.from(num++, allCandidateItem);
+            politicianRepository.save(politician);
+            politicianDetailRepository.save(politicianDetail);
+        }
     }
 }
