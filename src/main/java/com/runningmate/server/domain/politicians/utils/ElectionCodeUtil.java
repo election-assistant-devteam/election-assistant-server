@@ -86,4 +86,17 @@ public class ElectionCodeUtil {
         }
         return response;
     }
+
+
+    public List<ElectionCodeItem> getFilteredElectionCodeItems(List<ElectionCodeItem> response) {
+        List<ElectionCodeItem> filteredByNationalAndYear = new ArrayList<>();
+        for (var electionCodeItem : response) {
+            Integer year = Integer.parseInt(electionCodeItem.getSgVotedate().substring(0, 4));
+            if (year >= 2024
+                    && electionCodeItem.getSgName().contains("국회의원")) {
+                filteredByNationalAndYear.add(electionCodeItem);
+            }
+        }
+        return filteredByNationalAndYear;
+    }
 }
