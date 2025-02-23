@@ -19,7 +19,7 @@ public class PoliticianDetail extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 50, nullable = false)
+    @Column(nullable = false)
     private Integer politicianId;
     @Column(nullable = false)
     private Integer age;
