@@ -18,7 +18,7 @@ import java.util.Date;
 public class PoliticianDetail extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     @Column(length = 50, nullable = false)
     private Integer politicianId;
     @Column(nullable = false)
