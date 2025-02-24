@@ -10,9 +10,7 @@ import com.runningmate.server.domain.politicians.repository.CandidateRepository;
 import com.runningmate.server.domain.politicians.repository.ElectionRepository;
 import com.runningmate.server.domain.politicians.repository.PoliticianDetailRepository;
 import com.runningmate.server.domain.politicians.repository.PoliticianRepository;
-import com.runningmate.server.domain.politicians.utils.CandidateUtil;
-import com.runningmate.server.domain.politicians.utils.DateUtil;
-import com.runningmate.server.domain.politicians.utils.ElectionCodeUtil;
+import com.runningmate.server.domain.politicians.utils.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,11 +26,8 @@ public class PoliticianInfoService {
 
     private final ElectionCodeUtil electionCodeUtil;
     private final CandidateUtil candidateUtil;
-    private final PoliticianRepository politicianRepository;
-    private final PoliticianDetailRepository politicianDetailRepository;
-    private final ElectionRepository electionRepository;
-    private final CandidateRepository candidateRepository;
-
+    private final PoliticianUtil politicianUtil;
+    private final ElectionUtil electionUtil;
 
     public void savePoliticianInfos() {
         // 선거 코드 가져오기
@@ -44,14 +39,9 @@ public class PoliticianInfoService {
         List<ElectionCodeItem> filteredByNationalAndYear = electionCodeUtil.getFilteredElectionCodeItems(response, 2024, "국회의원");
         log.info("filteredByNationalAndYear {}", filteredByNationalAndYear.size());
 
+        // Election 저장 (중복 방지)
         for (ElectionCodeItem electionCodeItem : filteredByNationalAndYear) {
-            // Election 저장 (중복 방지)
-            Date electionDate = DateUtil.convertDateType(electionCodeItem.getSgVotedate());
-            Optional<Election> foundElection = electionRepository.findByDateAndType(electionDate, electionCodeItem.getSgTypecode());
-            if(foundElection.isPresent()) continue;
-
-            Election election = Election.from(electionCodeItem);
-            electionRepository.save(election);
+            electionUtil.saveElection(electionCodeItem);
         }
 
         // 선거 Id와 선거 종류 코드로 후보자 정보 가져오기
@@ -61,26 +51,12 @@ public class PoliticianInfoService {
         // DB 저장
         for (CandidateItem allCandidateItem : allCandidateItems) {
             // Politician 저장 (중복 방지)
-            Optional<Politician> foundPolitician = politicianRepository.findByNameAndParty(allCandidateItem.getName(), allCandidateItem.getJdName());
-            if(foundPolitician.isPresent())
-                continue;
+            Politician politician = politicianUtil.savePolitician(allCandidateItem);
+            if (politician == null) continue;
 
-            Politician politician = Politician.from(allCandidateItem);
-            PoliticianDetail politicianDetail = PoliticianDetail.from(politician, allCandidateItem);
-            politician.setPoliticianDetail(politicianDetail);
-            politicianRepository.save(politician);
-
-
-            Optional<Election> foundElection = electionRepository.findByDateAndType(DateUtil.convertDateType(allCandidateItem.getSgId()), allCandidateItem.getSgTypecode());
-            Election election = foundElection.get();
+            Election election = electionUtil.findElectionByCandidateItem(allCandidateItem);
             // Candidate(후보자) 저장 (중복 방지)
-            Optional<Candidate> foundCandidate = candidateRepository.findByPoliticianAndElection(politician, election);
-            if (foundCandidate.isPresent()) {
-                continue;
-            }
-
-            Candidate candidate = Candidate.from(politician, election, allCandidateItem.getJdName());
-            candidateRepository.save(candidate);
+            candidateUtil.saveCandidate(allCandidateItem, politician, election);
         }
     }
 }
