@@ -13,8 +13,10 @@ import java.util.Date;
 @Component
 public class DateUtil {
 
+    private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+
     public Date convertDateType(String date) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+
         Date convertedDate = null;
         try {
             convertedDate = formatter.parse(date);
