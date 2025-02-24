@@ -11,6 +11,15 @@ public class Candidate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 50, nullable = false)
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "politician_id", nullable = false)
+    private Politician politician;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "election_id", nullable = false)
+    private Election election;
+
+    @Column(name = "affiliated_party", length = 50, nullable = false)
     private String affiliatedPartyAtTheTime;
 }
