@@ -80,12 +80,14 @@ public class ElectionCodeUtil {
         return results;
     }
 
-    public List<ElectionCodeItem> getFilteredElectionCodeItems(List<ElectionCodeItem> response) {
+    public List<ElectionCodeItem> getFilteredElectionCodeItems(List<ElectionCodeItem> response,
+                                                               Integer minYear,
+                                                               String keyword) {
         List<ElectionCodeItem> filteredByNationalAndYear = new ArrayList<>();
         for (var electionCodeItem : response) {
             Integer year = Integer.parseInt(electionCodeItem.getSgVotedate().substring(0, 4));
-            if (year >= 2024
-                    && electionCodeItem.getSgName().contains("국회의원")) {
+            if (year >= minYear
+                    && electionCodeItem.getSgName().contains(keyword)) {
                 filteredByNationalAndYear.add(electionCodeItem);
             }
         }

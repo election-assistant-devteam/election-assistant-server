@@ -33,7 +33,7 @@ public class PoliticianInfoService {
         log.info("response {}", response.size());
 
         // 필터링
-        List<ElectionCodeItem> filteredByNationalAndYear = electionCodeUtil.getFilteredElectionCodeItems(response);
+        List<ElectionCodeItem> filteredByNationalAndYear = electionCodeUtil.getFilteredElectionCodeItems(response, 2024, "국회의원");
         log.info("filteredByNationalAndYear {}", filteredByNationalAndYear.size());
 
         // 선거 Id와 선거 종류 코드로 후보자 정보 가져오기
