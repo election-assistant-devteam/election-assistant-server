@@ -28,12 +28,19 @@ public class Politician extends BaseEntity {
     @Column(length = 50, nullable = false)
     private String electionType;
 
+    @OneToOne(mappedBy = "politician", cascade = CascadeType.ALL, orphanRemoval = true)
+    private PoliticianDetail politicianDetail;
+
     @Builder
     public Politician(String party, String name, String electionId, String electionType) {
         this.party = party;
         this.name = name;
         this.electionId = electionId;
         this.electionType = electionType;
+    }
+
+    public void setPoliticianDetail(PoliticianDetail politicianDetail) {
+        this.politicianDetail = politicianDetail;
     }
 
     public static Politician from(CandidateItem item) {
@@ -44,5 +51,4 @@ public class Politician extends BaseEntity {
                 .electionType(item.getSgTypecode())
                 .build();
     }
-
 }

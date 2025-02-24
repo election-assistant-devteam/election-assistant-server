@@ -41,12 +41,12 @@ public class PoliticianInfoService {
         log.info("allCandidateItems {}", allCandidateItems.size());
 
         // DB 저장
-        int num = 1; // 임시로 넣음
         for (CandidateItem allCandidateItem : allCandidateItems) {
             Politician politician = Politician.from(allCandidateItem);
-            PoliticianDetail politicianDetail = PoliticianDetail.from(num++, allCandidateItem);
+            PoliticianDetail politicianDetail = PoliticianDetail.from(politician, allCandidateItem);
+            politician.setPoliticianDetail(politicianDetail);
             politicianRepository.save(politician);
-            politicianDetailRepository.save(politicianDetail);
         }
+
     }
 }

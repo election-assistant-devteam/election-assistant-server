@@ -5,6 +5,7 @@ import com.runningmate.server.domain.politicians.utils.DateUtil;
 import com.runningmate.server.global.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
@@ -12,6 +13,7 @@ import org.hibernate.annotations.SQLRestriction;
 import java.util.Date;
 
 @Entity
+@Getter
 @NoArgsConstructor
 @SQLDelete(sql = "UPDATE user SET status='N' where id = ?")
 @SQLRestriction("status = 'Y'")
@@ -19,8 +21,6 @@ public class PoliticianDetail extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
-    private Integer politicianId;
     @Column(nullable = false)
     private Integer age;
     @Column(nullable = false)
@@ -40,9 +40,14 @@ public class PoliticianDetail extends BaseEntity {
     @Column(nullable = false)
     private String detail;
 
+    @OneToOne
+    @JoinColumn(name = "politician_id", referencedColumnName = "id", nullable = false)
+    private Politician politician;
+
+
     @Builder
-    public PoliticianDetail(Integer politicianId, Integer age, Date birth, String habitation, String family, String levelOfEducation, String career, String pastCrime, String pledge, String detail) {
-        this.politicianId = politicianId;
+    public PoliticianDetail(Politician politician, Integer age, Date birth, String habitation, String family, String levelOfEducation, String career, String pastCrime, String pledge, String detail) {
+        this.politician = politician;
         this.age = age;
         this.birth = birth;
         this.habitation = habitation;
@@ -54,7 +59,7 @@ public class PoliticianDetail extends BaseEntity {
         this.detail = detail;
     }
 
-    public static PoliticianDetail from(int num, CandidateItem item) {
+    public static PoliticianDetail from(Politician politician, CandidateItem item) {
         DateUtil dateUtil = new DateUtil();
         Date date = dateUtil.convertDateType(item.getBirthday());
         StringBuilder career = new StringBuilder();
@@ -62,7 +67,7 @@ public class PoliticianDetail extends BaseEntity {
         career.append(item.getCareer2()).append('\n');
 
         return PoliticianDetail.builder()
-                .politicianId(num)
+                .politician(politician)
                 .age(item.getAge())
                 .birth(date)
                 .habitation(item.getAddr())
