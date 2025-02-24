@@ -15,7 +15,7 @@ public class DateUtil {
 
     private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 
-    public Date convertDateType(String date) {
+    public static Date convertDateType(String date) {
 
         Date convertedDate = null;
         try {
