@@ -45,6 +45,7 @@ public class PoliticianInfoService {
         log.info("filteredByNationalAndYear {}", filteredByNationalAndYear.size());
 
         for (ElectionCodeItem electionCodeItem : filteredByNationalAndYear) {
+            // Election 저장 (중복 방지)
             Date electionDate = DateUtil.convertDateType(electionCodeItem.getSgVotedate());
             Optional<Election> foundElection = electionRepository.findByDateAndType(electionDate, electionCodeItem.getSgTypecode());
             if(foundElection.isPresent()) continue;
@@ -59,6 +60,7 @@ public class PoliticianInfoService {
 
         // DB 저장
         for (CandidateItem allCandidateItem : allCandidateItems) {
+            // Politician 저장 (중복 방지)
             Optional<Politician> foundPolitician = politicianRepository.findByNameAndParty(allCandidateItem.getName(), allCandidateItem.getJdName());
             if(foundPolitician.isPresent())
                 continue;
@@ -68,12 +70,15 @@ public class PoliticianInfoService {
             politician.setPoliticianDetail(politicianDetail);
             politicianRepository.save(politician);
 
-            Optional<Election> foundElection = electionRepository.findByDateAndType(DateUtil.convertDateType(allCandidateItem.getSgId()), allCandidateItem.getSgTypecode());
-            if(foundElection.isPresent())
-                continue;
 
+            Optional<Election> foundElection = electionRepository.findByDateAndType(DateUtil.convertDateType(allCandidateItem.getSgId()), allCandidateItem.getSgTypecode());
             Election election = foundElection.get();
             // Candidate(후보자) 저장 (중복 방지)
+            Optional<Candidate> foundCandidate = candidateRepository.findByPoliticianAndElection(politician, election);
+            if (foundCandidate.isPresent()) {
+                continue;
+            }
+
             Candidate candidate = Candidate.from(politician, election, allCandidateItem.getJdName());
             candidateRepository.save(candidate);
         }
