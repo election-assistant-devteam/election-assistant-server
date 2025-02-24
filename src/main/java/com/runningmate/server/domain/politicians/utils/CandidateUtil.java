@@ -1,11 +1,10 @@
 package com.runningmate.server.domain.politicians.utils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.runningmate.server.domain.politicians.dto.external.candidateinfo.CandidateApiResponse;
 import com.runningmate.server.domain.politicians.dto.external.candidateinfo.CandidateItem;
+import com.runningmate.server.domain.politicians.dto.external.candidateinfo.CandidateResponse;
 import com.runningmate.server.domain.politicians.dto.external.electioncode.ElectionCodeItem;
-import com.runningmate.server.domain.politicians.exception.ParsingFailedException;
+import com.runningmate.server.domain.politicians.dto.external.common.CommonApiResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +16,14 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.runningmate.server.global.common.response.status.BaseExceptionResponseStatus.PARSING_FAILED;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class CandidateUtil {
 
     private final String baseUrl = "http://apis.data.go.kr/9760000/PofelcddInfoInqireService";
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final JsonParserUtil jsonParserUtil;
     @Value("${runningmate.api.publicData.key}")
     private String publicDataKey;
 
@@ -59,10 +58,12 @@ public class CandidateUtil {
             log.info("candidate. {}", responseBody);
 
             // Json을 객체로 변환
-            CandidateApiResponse response2 = getCandidateApiResponse(responseBody);
+            //CandidateApiResponse response2 = getCandidateApiResponse(responseBody);
+            CommonApiResponse<CandidateResponse> response2 = jsonParserUtil.parseJson(responseBody, CandidateResponse.class);
 
-            if (response2.getCandidateResponse() != null && response2.getCandidateResponse().getBody() != null) { // code
-                results.addAll(response2.getCandidateResponse().getBody().getItems().getItemList());
+
+            if (response2.getResponse() != null && response2.getResponse().getBody() != null) { // code
+                results.addAll(response2.getResponse().getBody().getItems().getItemList());
                 pageNo++;
             } else {
                 hasMoreData = false;
@@ -73,16 +74,6 @@ public class CandidateUtil {
         }
 
         return results;
-    }
-
-    private CandidateApiResponse getCandidateApiResponse(String responseBody) {
-        CandidateApiResponse response;
-        try {
-            response = objectMapper.readValue(responseBody, CandidateApiResponse.class);
-        } catch (JsonProcessingException e) {
-            throw new ParsingFailedException(PARSING_FAILED);
-        }
-        return response;
     }
 
     public List<CandidateItem> fetchCandidateInfo(List<ElectionCodeItem> filteredByNationalAndYear) {

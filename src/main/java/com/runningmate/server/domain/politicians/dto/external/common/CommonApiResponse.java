@@ -1,4 +1,4 @@
-package com.runningmate.server.domain.politicians.dto.external.candidateinfo;
+package com.runningmate.server.domain.politicians.dto.external.common;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CandidateApiResponse {
+public class CommonApiResponse<T extends CommonResponseBody<?>> {
     @JsonProperty("response")
-    private CandidateResponse candidateResponse;
+    private T response;
 }

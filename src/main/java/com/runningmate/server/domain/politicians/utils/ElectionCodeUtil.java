@@ -1,10 +1,10 @@
 package com.runningmate.server.domain.politicians.utils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.runningmate.server.domain.politicians.dto.external.electioncode.ElectionCodeApiResponse;
 import com.runningmate.server.domain.politicians.dto.external.electioncode.ElectionCodeItem;
-import com.runningmate.server.domain.politicians.exception.ParsingFailedException;
+import com.runningmate.server.domain.politicians.dto.external.electioncode.ElectionCodeResponseBody;
+import com.runningmate.server.domain.politicians.dto.external.common.CommonApiResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +16,14 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.runningmate.server.global.common.response.status.BaseExceptionResponseStatus.PARSING_FAILED;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class ElectionCodeUtil {
 
     private final String baseUrl = "http://apis.data.go.kr/9760000/CommonCodeService";
+    private final JsonParserUtil jsonParserUtil;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Value("${runningmate.api.publicData.key}")
@@ -58,12 +59,14 @@ public class ElectionCodeUtil {
 
             // Json 파싱
             // JSON을 Java 객체로 변환
-            ElectionCodeApiResponse response = getElectionCodeApiResponse(responseBody);
+            //ElectionCodeApiResponse response = getElectionCodeApiResponse(responseBody);
+            // JSON을 공통 응답 구조로 변환
+            CommonApiResponse<ElectionCodeResponseBody> response = jsonParserUtil.parseJson(responseBody, ElectionCodeResponseBody.class);
 
             // items 태그가 있고, 리스트가 비어있지 않으면 저장
             log.info("{}", response);
-            if (response.getElectionCodeResponseBody() != null && response.getElectionCodeResponseBody().getBody() != null) {
-                results.addAll(response.getElectionCodeResponseBody().getBody().getItems().getItemList());
+            if (response.getResponse() != null && response.getResponse().getBody() != null) {
+                results.addAll(response.getResponse().getBody().getItems().getItemList());
                 pageNo++;
                 log.info("pageNo {}", pageNo);
             } else {
@@ -76,17 +79,6 @@ public class ElectionCodeUtil {
         // 응답 값
         return results;
     }
-
-    private ElectionCodeApiResponse getElectionCodeApiResponse(String responseBody) {
-        ElectionCodeApiResponse response = null;
-        try {
-            response = objectMapper.readValue(responseBody, ElectionCodeApiResponse.class);
-        } catch (JsonProcessingException e) {
-            throw new ParsingFailedException(PARSING_FAILED);
-        }
-        return response;
-    }
-
 
     public List<ElectionCodeItem> getFilteredElectionCodeItems(List<ElectionCodeItem> response) {
         List<ElectionCodeItem> filteredByNationalAndYear = new ArrayList<>();
