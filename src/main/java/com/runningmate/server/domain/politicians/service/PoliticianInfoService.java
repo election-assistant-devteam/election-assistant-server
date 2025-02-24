@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,6 +45,10 @@ public class PoliticianInfoService {
         log.info("filteredByNationalAndYear {}", filteredByNationalAndYear.size());
 
         for (ElectionCodeItem electionCodeItem : filteredByNationalAndYear) {
+            Date electionDate = DateUtil.convertDateType(electionCodeItem.getSgVotedate());
+            Optional<Election> foundElection = electionRepository.findByDateAndType(electionDate, electionCodeItem.getSgTypecode());
+            if(foundElection.isPresent()) continue;
+
             Election election = Election.from(electionCodeItem);
             electionRepository.save(election);
         }
@@ -53,18 +58,22 @@ public class PoliticianInfoService {
         log.info("allCandidateItems {}", allCandidateItems.size());
 
         // DB 저장
-
         for (CandidateItem allCandidateItem : allCandidateItems) {
+            Optional<Politician> foundPolitician = politicianRepository.findByNameAndParty(allCandidateItem.getName(), allCandidateItem.getJdName());
+            if(foundPolitician.isPresent())
+                continue;
+
             Politician politician = Politician.from(allCandidateItem);
             PoliticianDetail politicianDetail = PoliticianDetail.from(politician, allCandidateItem);
-
             politician.setPoliticianDetail(politicianDetail);
             politicianRepository.save(politician);
 
             Optional<Election> foundElection = electionRepository.findByDateAndType(DateUtil.convertDateType(allCandidateItem.getSgId()), allCandidateItem.getSgTypecode());
+            if(foundElection.isPresent())
+                continue;
 
             Election election = foundElection.get();
-            // 🔹 Candidate(후보자) 저장 (중복 방지)
+            // Candidate(후보자) 저장 (중복 방지)
             Candidate candidate = Candidate.from(politician, election, allCandidateItem.getJdName());
             candidateRepository.save(candidate);
         }

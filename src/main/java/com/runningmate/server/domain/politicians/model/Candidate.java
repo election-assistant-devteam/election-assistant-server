@@ -1,6 +1,7 @@
 package com.runningmate.server.domain.politicians.model;
 
 import com.runningmate.server.domain.politicians.dto.external.candidateinfo.CandidateItem;
+import com.runningmate.server.global.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Getter
 @SQLDelete(sql = "UPDATE user SET status='N' where id = ?")
 @SQLRestriction("status = 'Y'")
-public class Candidate {
+public class Candidate extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
