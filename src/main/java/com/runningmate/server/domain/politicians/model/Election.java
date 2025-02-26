@@ -11,7 +11,9 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,6 +30,8 @@ public class Election extends BaseEntity {
     private Date date;
     @Column(nullable = false)
     private String type;
+    @OneToMany(mappedBy = "election", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Candidate> candidates = new ArrayList<>();
 
     @Builder
     public Election(String name, Date date, String type) {
