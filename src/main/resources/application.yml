@@ -99,3 +99,6 @@ runningmate:
       expiredMs: ${JWT_ACCESS_EXPIRED}
     refresh:
       expiredMs: ${JWT_REFRESH_EXPIRED}
+  api:
+    publicData:
+      key: ${PUBLIC_DATA_API_KEY}
