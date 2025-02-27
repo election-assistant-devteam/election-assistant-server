@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -26,6 +29,10 @@ public class Politician extends BaseEntity {
 
     @OneToOne(mappedBy = "politician", cascade = CascadeType.ALL, orphanRemoval = true)
     private PoliticianDetail politicianDetail;
+
+    @OneToMany(mappedBy = "politician", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Candidate> candidates = new ArrayList<>();
+
 
     @Builder
     public Politician(String party, String name) {
