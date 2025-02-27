@@ -71,7 +71,7 @@ jobs:
 
             echo "🌱 Running new container"
             sudo docker run -d --env-file .env \
-            -p 8000:8080 --name runningmate ${{ secrets.DOCKER_USERNICKNAME }}/${{ secrets.DOCKER_IMAGE }}
+            -p 8000:9001 --name runningmate ${{ secrets.DOCKER_USERNICKNAME }}/${{ secrets.DOCKER_IMAGE }}
 
             echo "🚮 Cleaning up old images"
             sudo docker image prune -f
