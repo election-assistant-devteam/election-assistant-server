@@ -9,11 +9,11 @@ import org.hibernate.validator.constraints.Length;
 
 @Getter
 public class CreateUserRequest {
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z0-9]{9,12}$", message="아이디는 영어와 숫자의 조합으로 9자 이상의 문자열이어야합니다.")
+    @Pattern(regexp = "^[a-zA-Z0-9]{4,12}$", message="아이디는 영어와 숫자의 조합으로 9자 이상의 문자열이어야합니다.")
     @NotEmpty(message = "아이디는 비어 있을 수 없습니다")
     private String username;
 
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z0-9]{9,12}$", message="비밀번호는 영어와 숫자의 조합으로 9자 이상의 문자열이어야합니다.")
+    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)[a-zA-Z\\d]{9,12}$", message="비밀번호는 영어와 숫자의 조합으로 9자 이상의 문자열이어야합니다.")
     @NotEmpty(message = "비밀번호는 비어 있을 수 없습니다")
     private String password;
 
