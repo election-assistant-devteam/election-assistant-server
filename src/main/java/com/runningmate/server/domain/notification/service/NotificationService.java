@@ -1,16 +1,9 @@
 package com.runningmate.server.domain.notification.service;
 
-import com.runningmate.server.domain.notification.dto.NotificationResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import com.runningmate.server.domain.notification.model.Notification;
 
-@Slf4j
-@RequiredArgsConstructor
-@Service
-public class NotificationService {
+import java.util.List;
 
-    public NotificationResponse getNotification () {
-        return null;
-    }
+public interface NotificationService {
+    List<Notification> findAll();
 }
