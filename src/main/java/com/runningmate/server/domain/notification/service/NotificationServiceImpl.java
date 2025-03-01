@@ -1,6 +1,5 @@
 package com.runningmate.server.domain.notification.service;
 
-import com.runningmate.server.domain.notification.dto.NotificationList;
 import com.runningmate.server.domain.notification.model.Notification;
 import com.runningmate.server.domain.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Slf4j
@@ -22,5 +22,9 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public List<Notification> findAll() {
         return notificationRepository.findAll();
+    }
+    @Override
+    public Optional<Notification> findOne(Long id) {
+        return notificationRepository.findById(id);
     }
 }

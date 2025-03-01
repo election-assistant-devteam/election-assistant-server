@@ -9,9 +9,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -24,6 +26,13 @@ public class NotificationController {
     public BaseResponse<NotificationList> getNotification() {
         List<Notification> notificationList = notificationService.findAll();
         return new BaseResponse<>(new NotificationList(notificationList));
+    }
+
+    @GetMapping("post")
+    public BaseResponse<Notification> getNotificationById(@RequestParam Long id) {
+        log.info("Received ID: {}", id);
+        Optional<Notification> notification = notificationService.findOne(id);
+        return new BaseResponse<>(notification.orElse(null));
     }
 
 }
