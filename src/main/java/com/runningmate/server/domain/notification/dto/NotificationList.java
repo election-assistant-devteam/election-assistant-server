@@ -11,5 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NotificationList {
-    private List<Notification> notificationList;
+    private List<NotificationItem> notifications;
+
 }

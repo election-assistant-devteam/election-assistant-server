@@ -1,11 +1,12 @@
 package com.runningmate.server.domain.notification.service;
 
-import com.runningmate.server.domain.notification.model.Notification;
+import com.runningmate.server.domain.notification.dto.NotificationItem;
+import com.runningmate.server.domain.notification.dto.NotificationList;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface NotificationService {
-    List<Notification> findAll();
-    Optional<Notification> findOne(Long id);
+
+    NotificationList findAll();
+    Optional<NotificationItem> findOne(Long id);
 }

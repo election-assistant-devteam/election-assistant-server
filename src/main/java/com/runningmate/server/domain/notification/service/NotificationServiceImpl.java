@@ -1,5 +1,7 @@
 package com.runningmate.server.domain.notification.service;
 
+import com.runningmate.server.domain.notification.dto.NotificationItem;
+import com.runningmate.server.domain.notification.dto.NotificationList;
 import com.runningmate.server.domain.notification.model.Notification;
 import com.runningmate.server.domain.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -16,15 +19,21 @@ import java.util.Optional;
 @Service
 public class NotificationServiceImpl implements NotificationService {
 
-    @Autowired
+
     private final NotificationRepository notificationRepository;
 
     @Override
-    public List<Notification> findAll() {
-        return notificationRepository.findAll();
+    public NotificationList findAll() {
+        List<NotificationItem> notificationItems = notificationRepository.findAll()
+                .stream()
+                .map(NotificationItem::fromEntity)
+                .collect(Collectors.toList());
+        return new NotificationList(notificationItems);
     }
+
     @Override
-    public Optional<Notification> findOne(Long id) {
-        return notificationRepository.findById(id);
+    public Optional<NotificationItem> findOne(Long id) {
+        return notificationRepository.findById(id)
+                .map(NotificationItem::fromEntity);
     }
 }

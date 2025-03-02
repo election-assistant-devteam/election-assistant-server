@@ -1,6 +1,7 @@
 package com.runningmate.server.domain.notification.controller;
 
 
+import com.runningmate.server.domain.notification.dto.NotificationItem;
 import com.runningmate.server.domain.notification.dto.NotificationList;
 import com.runningmate.server.domain.notification.model.Notification;
 import com.runningmate.server.domain.notification.service.NotificationService;
@@ -24,15 +25,15 @@ public class NotificationController {
 
     @GetMapping
     public BaseResponse<NotificationList> getNotification() {
-        List<Notification> notificationList = notificationService.findAll();
-        return new BaseResponse<>(new NotificationList(notificationList));
+        NotificationList notificationList = notificationService.findAll();
+        return new BaseResponse<>(notificationList);
     }
 
     @GetMapping("post")
-    public BaseResponse<Notification> getNotificationById(@RequestParam Long id) {
+    public BaseResponse<NotificationItem> getNotificationById(@RequestParam Long id) {
         log.info("Received ID: {}", id);
-        Optional<Notification> notification = notificationService.findOne(id);
-        return new BaseResponse<>(notification.orElse(null));
+        Optional<NotificationItem> notificationItem = notificationService.findOne(id);
+        return new BaseResponse<>(notificationItem.orElse(null));
     }
 
 }
