@@ -1,20 +1,26 @@
 package com.runningmate.server.global.config;
 
+import com.runningmate.server.global.jwt.JwtAuthenticationFilter;
 import com.runningmate.server.global.jwt.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
     private final JwtUtil jwtUtil;
 
-    public SecurityConfig(JwtUtil jwtUtil) {
+    private final UserDetailsService userDetailsService;
+
+    public SecurityConfig(JwtUtil jwtUtil, UserDetailsService userDetailsService) {
         this.jwtUtil = jwtUtil;
+        this.userDetailsService = userDetailsService;
     }
 
     @Bean
@@ -42,6 +48,10 @@ public class SecurityConfig {
                         .requestMatchers("/auth/login", "/users").permitAll()
                         .anyRequest().authenticated()
                 );
+
+        // 토큰 검증 필터 추가
+        http
+                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
