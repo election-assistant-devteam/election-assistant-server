@@ -2,6 +2,8 @@ package com.runningmate.server.global.config;
 
 import com.runningmate.server.global.jwt.JwtAuthenticationFilter;
 import com.runningmate.server.global.jwt.JwtUtil;
+import com.runningmate.server.global.security.CustomAuthenticationEntryPoint;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,15 +15,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtUtil jwtUtil;
-
     private final UserDetailsService userDetailsService;
-
-    public SecurityConfig(JwtUtil jwtUtil, UserDetailsService userDetailsService) {
-        this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
-    }
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
@@ -51,7 +50,10 @@ public class SecurityConfig {
 
         // 토큰 검증 필터 추가
         http
-                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        http
+                .exceptionHandling(configurer->configurer.authenticationEntryPoint(customAuthenticationEntryPoint));
 
         return http.build();
     }
