@@ -28,9 +28,10 @@ public class JwtUtil {
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
-    public String generateAccessToken(Long userId) {
+    public String generateAccessToken(Long userId, String username) {
         return Jwts.builder()
                 .claim("userId", userId)
+                .claim("username", username)
                 .claim("token_type", "access")
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + accessTokenExpiredMs))
@@ -38,9 +39,10 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String generateRefreshToken(Long userId) {
+    public String generateRefreshToken(Long userId, String username) {
         return Jwts.builder()
                 .claim("userId", userId)
+                .claim("username", username)
                 .claim("token_type", "refresh")
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + refreshTokenExpiredMs))
@@ -66,6 +68,8 @@ public class JwtUtil {
     }
 
     public String getUsername(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
+        String username =  Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
+        log.info("[getUsername] username = {}", username);
+        return username;
     }
 }
