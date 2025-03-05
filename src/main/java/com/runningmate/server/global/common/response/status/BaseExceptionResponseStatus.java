@@ -8,7 +8,7 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
     BAD_REQUEST(40000, "유효하지 않은 요청입니다."),
     NOT_FOUND(40400, "존재하지 않는 API입니다."),
 
-    UNATHORIZED_USER(40100,  "권한이 없는 사용자의 요청입니다."),
+    UNAUTHORIZED_USER(40100,  "권한이 없는 사용자의 요청입니다."),
 
     // 엔티티 관련 에러
     USER_NOT_FOUND(40400, "존재하지 않는 유저입니다."),
