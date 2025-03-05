@@ -1,6 +1,8 @@
 spring:
   datasource:
-    url: jdbc:h2:tcp:localhost/~/runningmate
+#    url: jdbc:h2:tcp:localhost/~/runningmate h2서버모드
+#    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:tcp://localhost/~/test
     username: sa
     password:
     driver-class-name: org.h2.Driver
@@ -24,3 +26,7 @@ runningmate:
       expiredMs: 10000000
     refresh:
       expiredMs: 10000000
+
+  api:
+    publicData:
+      key: ${PUBLIC_DATA_API_KEY}
