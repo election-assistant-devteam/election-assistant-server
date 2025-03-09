@@ -48,6 +48,8 @@ dependencies {
     // Security
     implementation "org.springframework.boot:spring-boot-starter-security"
     testImplementation "org.springframework.security:spring-security-test"
+
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 }
 
 tasks.named('test') {
