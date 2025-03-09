@@ -39,6 +39,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 
+            // request 객체를 통해서 argument resovler로 token 전달
+            request.setAttribute("access_token", token);
+
             //스프링 시큐리티 인증 토큰 생성하고 세션에 저장
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
