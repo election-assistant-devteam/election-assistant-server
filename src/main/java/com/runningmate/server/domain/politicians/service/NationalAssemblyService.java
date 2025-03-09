@@ -22,7 +22,6 @@ public class NationalAssemblyService {
 
     private final NaUtil naUtil;
     private final PoliticianUtil politicianUtil;
-    private final PoliticianRepository politicianRepository;
 
     public void saveMemberImg(){
 
