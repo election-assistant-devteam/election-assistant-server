@@ -26,10 +26,12 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
     // 외부 api json 파싱 실패
     PARSING_FAILED(50000, "외부 api JSON 파싱에 실패하였습니다."),
 
-    INTERNAL_SERVER_ERROR(50000, "서버 내부 오류입니다.");
+    INTERNAL_SERVER_ERROR(50000, "서버 내부 오류입니다."),
 
     // 외부 api 파싱 에러
 
+    // 토큰 검증 관련 에러
+    TOKEN_AUTHENTICATION_FAILED(40100, "토큰 인증에 실패했습니다.");
 
     private final boolean success = false;
     private final int code;

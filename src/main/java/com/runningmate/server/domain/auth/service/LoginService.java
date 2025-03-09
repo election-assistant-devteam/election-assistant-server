@@ -31,8 +31,8 @@ public class LoginService {
             throw new LoginFailedException(INCORRECT_PASSWORD);
         }
 
-        String accessToken = jwtUtil.generateAccessToken(user.getId());
-        String refreshToken = jwtUtil.generateRefreshToken(user.getId());
+        String accessToken = jwtUtil.generateAccessToken(user.getId(), user.getUsername());
+        String refreshToken = jwtUtil.generateRefreshToken(user.getId(), user.getUsername());
 
         return LoginResponse.from(accessToken, refreshToken, user);
     }
