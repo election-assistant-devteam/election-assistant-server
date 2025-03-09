@@ -21,7 +21,7 @@ public class ElectionController {
     @GetMapping("/politicians")
     public BaseResponse<Void> savePoliticianInfoList(){
         // 기본 정보 저장
-        //politicianInfoService.savePoliticianInfos();
+        politicianInfoService.savePoliticianInfos();
         log.info("기본 저장 완료");
         // 정치인 사진 첨부
         nationalAssemblyService.saveMemberImg();
