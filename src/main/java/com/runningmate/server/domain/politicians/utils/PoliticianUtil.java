@@ -43,7 +43,7 @@ public class PoliticianUtil {
             return false;
 
         // 생일 비교
-        boolean isBirthMatch = detail != null && detail.getBirth().compareTo(birth2Date) == 0;
+        boolean isBirthMatch = detail != null && DateUtil.compareDate(detail.getBirth(),birth2Date);
 
         return isNameMatch && isBirthMatch;
     }
