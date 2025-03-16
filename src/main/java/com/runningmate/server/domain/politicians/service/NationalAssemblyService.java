@@ -34,7 +34,7 @@ public class NationalAssemblyService {
 
         // 3. 기존 db에 생일과 소속당을 기반으로 국회의원 imgUrl을 추가시킨다.
         politicianUtil.updateImageUrl(politicians, naRows);
-        //politicianUtil.checkImageUrls(); // 디버깅용
+        politicianUtil.checkImageUrls(); // 디버깅용
     }
 
 }
