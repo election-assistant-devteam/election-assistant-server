@@ -21,10 +21,8 @@ public class PoliticianUtil {
 
     public void updateImageUrl(List<Politician> politicians, List<NaRow> naRows) {
         for (Politician politician : politicians) {
-            PoliticianDetail detail = politician.getPoliticianDetail(); // 상세 정보 가져오기
-
             for (NaRow naRow : naRows) {
-                if (politicianMatchesNaRow(politician, detail, naRow)) {
+                if (politicianMatchesNaRow(politician, naRow)) {
                     politician.setImageUrl(naRow.getNaasPic());
                     //log.info("{} 정치인 이미지 URL 업데이트: {}", politician.getName(), naRow.getNaasPic());
                 }
@@ -33,7 +31,8 @@ public class PoliticianUtil {
         politicianRepository.saveAll(politicians);
     }
 
-    private boolean politicianMatchesNaRow(Politician politician, PoliticianDetail detail, NaRow naRow) {
+    private boolean politicianMatchesNaRow(Politician politician, NaRow naRow) {
+
         // 이름 비교
         boolean isNameMatch = politician.getName().equals(naRow.getNaasNm());
 
@@ -43,7 +42,8 @@ public class PoliticianUtil {
             return false;
 
         // 생일 비교
-        boolean isBirthMatch = detail != null && DateUtil.compareDate(detail.getBirth(),birth2Date);
+        PoliticianDetail politicianDetail = politician.getPoliticianDetail();
+        boolean isBirthMatch = politicianDetail != null && DateUtil.compareDate(politicianDetail.getBirth(),birth2Date);
 
         return isNameMatch && isBirthMatch;
     }
