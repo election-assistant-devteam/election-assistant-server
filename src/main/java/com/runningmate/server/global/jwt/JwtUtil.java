@@ -72,4 +72,10 @@ public class JwtUtil {
         log.info("[getUsername] username = {}", username);
         return username;
     }
+
+    public Long getUserId(String token) {
+        Long userId = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userId", Long.class);
+        log.info("[getUserId] userId = {}", userId);
+        return userId;
+    }
 }
