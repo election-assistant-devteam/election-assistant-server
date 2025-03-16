@@ -14,6 +14,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import static com.runningmate.server.domain.politicians.utils.DateUtil.*;
 
 @Slf4j
 @Service
@@ -25,12 +29,19 @@ public class NationalAssemblyService {
 
     public void saveMemberImg(){
 
-        // 1. 기존 DB에서 정치인 정보 가져오기
-        List<Politician> politicians = politicianUtil.findAllPoliticians();
-
-        // 2. 국회 api를 통해서 정보를 가져온다.
+        // 1. 국회 api를 통해서 정보를 가져온다.
         List<NaRow> naRows = naUtil.fetchNaInfo();
         log.info("naRow size {}", naRows.size());
+
+        // 2. 기존 DB에서 정치인 정보 가져오기
+        // 국회 API에서 가져온 생일과 이름 기준으로 필요한 정치인만 가져오기
+        List<Date> birthdays = naRows.stream()
+                .map(naRow -> convertDateType(naRow.getBirdyDt()))
+                .filter(Objects::nonNull) // 변환 실패한 경우 제외
+                .collect(Collectors.toList());
+        List<String> names = naRows.stream().map(NaRow::getNaasNm).collect(Collectors.toList());
+
+        List<Politician> politicians = politicianUtil.findPoliticiansByBirthdayAndParty(birthdays, names);
 
         // 3. 기존 db에 생일과 소속당을 기반으로 국회의원 imgUrl을 추가시킨다.
         politicianUtil.updateImageUrl(politicians, naRows);
