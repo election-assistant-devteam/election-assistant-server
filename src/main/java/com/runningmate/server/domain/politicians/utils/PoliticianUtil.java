@@ -48,11 +48,6 @@ public class PoliticianUtil {
         return isNameMatch && isBirthMatch;
     }
 
-    public List<Politician> findAllPoliticians() {
-        List<Politician> politicians = politicianRepository.findAll();
-        return politicians;
-    }
-
     public Politician savePolitician(CandidateItem allCandidateItem) {
         if (checkDuplicatePolitician(allCandidateItem.getName(), allCandidateItem.getJdName())) return null;
         Politician politician = Politician.from(allCandidateItem);
@@ -79,4 +74,7 @@ public class PoliticianUtil {
         }
     }
 
+    public List<Politician> findPoliticiansByBirthdayAndParty(List<Date> birthdays, List<String> names) {
+        return politicianRepository.findPoliticiansByBirthdayAndName(birthdays, names);
+    }
 }
