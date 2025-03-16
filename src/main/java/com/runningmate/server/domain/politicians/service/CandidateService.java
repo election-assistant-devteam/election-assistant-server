@@ -67,7 +67,7 @@ public class CandidateService {
             subList = new ArrayList<>(candidatesSimpleInfo.subList(lastId, toIndex));
 
             isMore = toIndex < candidatesSimpleInfo.size();
-            lastId = toIndex-1;
+            lastId = toIndex;
         }
 
         // 10개씩 줘야함
