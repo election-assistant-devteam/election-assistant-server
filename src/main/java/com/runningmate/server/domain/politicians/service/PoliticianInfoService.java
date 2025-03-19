@@ -6,12 +6,15 @@ import com.runningmate.server.domain.politicians.dto.external.candidateinfo.Cand
 import com.runningmate.server.domain.politicians.dto.external.electioncode.ElectionCodeItem;
 import com.runningmate.server.domain.politicians.model.Election;
 import com.runningmate.server.domain.politicians.model.Politician;
+import com.runningmate.server.domain.politicians.repository.ElectionRepository;
 import com.runningmate.server.domain.politicians.utils.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -23,7 +26,8 @@ public class PoliticianInfoService {
 
     private final CandidateUtil candidateUtil;
     private final PoliticianUtil politicianUtil;
-    private final ElectionUtil electionUtil;
+
+    private final ElectionRepository electionRepository;
 
     public void savePoliticianInfos() {
         // 선거 코드 가져오기
@@ -37,7 +41,7 @@ public class PoliticianInfoService {
 
         // Election 저장 (중복 방지)
         for (ElectionCodeItem electionCodeItem : filteredByNationalAndYear) {
-            electionUtil.saveElection(electionCodeItem);
+            saveElection(electionCodeItem);
         }
 
         // 선거 Id와 선거 종류 코드로 후보자 정보 가져오기
@@ -50,9 +54,28 @@ public class PoliticianInfoService {
             Politician politician = politicianUtil.savePolitician(allCandidateItem);
             if (politician == null) continue;
 
-            Election election = electionUtil.findElectionByCandidateItem(allCandidateItem);
+            Election election = findElectionByCandidateItem(allCandidateItem);
             // Candidate(후보자) 저장 (중복 방지)
             candidateUtil.saveCandidate(allCandidateItem, politician, election);
         }
+    }
+
+    public Election findElectionByCandidateItem(CandidateItem allCandidateItem) {
+        Optional<Election> foundElection = electionRepository.findByDateAndType(DateUtil.convertDateType(allCandidateItem.getSgId()), allCandidateItem.getSgTypecode());
+        Election election = foundElection.get();
+        return election;
+    }
+
+    public void saveElection(ElectionCodeItem electionCodeItem) {
+        if (checkDuplicateElection(electionCodeItem.getSgVotedate(), electionCodeItem.getSgTypecode())) return;
+        Election election = Election.from(electionCodeItem);
+        electionRepository.save(election);
+    }
+
+    private boolean checkDuplicateElection(String electionId, String electionCode) {
+        Date electionDate = DateUtil.convertDateType(electionId);
+        Optional<Election> foundElection = electionRepository.findByDateAndType(electionDate, electionCode);
+        if(foundElection.isPresent()) return true;
+        return false;
     }
 }
