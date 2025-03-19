@@ -23,7 +23,6 @@ import java.util.List;
 public class CandidateApiClient {
 
     private final String baseUrl = "http://apis.data.go.kr/9760000/PofelcddInfoInqireService";
-    private final JsonParserUtil jsonParserUtil;
     @Value("${runningmate.api.publicData.key}")
     private String publicDataKey;
 
@@ -59,7 +58,7 @@ public class CandidateApiClient {
 
             // Json을 객체로 변환
             //CandidateApiResponse response2 = getCandidateApiResponse(responseBody);
-            CommonApiResponse<CandidateResponse> response2 = jsonParserUtil.parseJson(responseBody, CandidateResponse.class);
+            CommonApiResponse<CandidateResponse> response2 = JsonParserUtil.parseJson(responseBody, CandidateResponse.class);
 
 
             if (response2.getResponse() != null && response2.getResponse().getBody() != null) { // code

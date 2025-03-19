@@ -23,7 +23,6 @@ public class ElectionCodeApiClient {
 
     private final String baseUrl = "http://apis.data.go.kr/9760000/CommonCodeService";
 
-    private final JsonParserUtil jsonParserUtil;
     @Value("${runningmate.api.publicData.key}")
     private String publicDataKey;
 
@@ -59,7 +58,7 @@ public class ElectionCodeApiClient {
             // JSON을 Java 객체로 변환
             //ElectionCodeApiResponse response = getElectionCodeApiResponse(responseBody);
             // JSON을 공통 응답 구조로 변환
-            CommonApiResponse<ElectionCodeResponseBody> response = jsonParserUtil.parseJson(responseBody, ElectionCodeResponseBody.class);
+            CommonApiResponse<ElectionCodeResponseBody> response = JsonParserUtil.parseJson(responseBody, ElectionCodeResponseBody.class);
 
             // items 태그가 있고, 리스트가 비어있지 않으면 저장
             log.info("{}", response);
