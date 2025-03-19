@@ -3,6 +3,7 @@ package com.runningmate.server.domain.politicians.service;
 import com.runningmate.server.domain.politicians.client.NationalAssemblyApiClient;
 import com.runningmate.server.domain.politicians.dto.external.nationassembly.NaRow;
 import com.runningmate.server.domain.politicians.model.Politician;
+import com.runningmate.server.domain.politicians.repository.PoliticianRepository;
 import com.runningmate.server.domain.politicians.utils.PoliticianUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,7 @@ import static com.runningmate.server.domain.politicians.utils.DateUtil.*;
 public class NationalAssemblyService {
 
     private final NationalAssemblyApiClient nationalAssemblyApiClient;
-    private final PoliticianUtil politicianUtil;
+    private final PoliticianRepository politicianRepository;
 
     public void saveMemberImg(){
 
@@ -37,11 +38,36 @@ public class NationalAssemblyService {
                 .collect(Collectors.toList());
         List<String> names = naRows.stream().map(NaRow::getNaasNm).collect(Collectors.toList());
 
-        List<Politician> politicians = politicianUtil.findPoliticiansByBirthdayAndParty(birthdays, names);
+        List<Politician> politicians = findPoliticiansByBirthdayAndParty(birthdays, names);
 
         // 3. 기존 db에 생일과 소속당을 기반으로 국회의원 imgUrl을 추가시킨다.
-        politicianUtil.updateImageUrl(politicians, naRows);
-        politicianUtil.checkImageUrls(); // 디버깅용
+        updateImageUrl(politicians, naRows);
+        checkImageUrls(); // 디버깅용
+    }
+
+    // 디버깅용
+    public void checkImageUrls() {
+        List<Politician> politicians = politicianRepository.findAll();
+        for (Politician politician : politicians) {
+            log.info("이름: {}, 정당: {}, 이미지 URL: {}",
+                    politician.getName(), politician.getParty(), politician.getImageUrl());
+        }
+    }
+
+    public void updateImageUrl(List<Politician> politicians, List<NaRow> naRows) {
+        for (Politician politician : politicians) {
+            for (NaRow naRow : naRows) {
+                if (PoliticianUtil.politicianMatchesNaRow(politician, naRow)) {
+                    politician.setImageUrl(naRow.getNaasPic());
+                    //log.info("{} 정치인 이미지 URL 업데이트: {}", politician.getName(), naRow.getNaasPic());
+                }
+            }
+        }
+        politicianRepository.saveAll(politicians);
+    }
+
+    public List<Politician> findPoliticiansByBirthdayAndParty(List<Date> birthdays, List<String> names) {
+        return politicianRepository.findPoliticiansByBirthdayAndName(birthdays, names);
     }
 
 }

@@ -19,19 +19,9 @@ import java.util.Optional;
 public class PoliticianUtil {
     private final PoliticianRepository politicianRepository;
 
-    public void updateImageUrl(List<Politician> politicians, List<NaRow> naRows) {
-        for (Politician politician : politicians) {
-            for (NaRow naRow : naRows) {
-                if (politicianMatchesNaRow(politician, naRow)) {
-                    politician.setImageUrl(naRow.getNaasPic());
-                    //log.info("{} 정치인 이미지 URL 업데이트: {}", politician.getName(), naRow.getNaasPic());
-                }
-            }
-        }
-        politicianRepository.saveAll(politicians);
-    }
 
-    private boolean politicianMatchesNaRow(Politician politician, NaRow naRow) {
+
+    public static boolean politicianMatchesNaRow(Politician politician, NaRow naRow) {
 
         // 이름 비교
         boolean isNameMatch = politician.getName().equals(naRow.getNaasNm());
@@ -65,16 +55,7 @@ public class PoliticianUtil {
         return false;
     }
 
-    // 디버깅용
-    public void checkImageUrls() {
-        List<Politician> politicians = politicianRepository.findAll();
-        for (Politician politician : politicians) {
-            log.info("이름: {}, 정당: {}, 이미지 URL: {}",
-                    politician.getName(), politician.getParty(), politician.getImageUrl());
-        }
-    }
 
-    public List<Politician> findPoliticiansByBirthdayAndParty(List<Date> birthdays, List<String> names) {
-        return politicianRepository.findPoliticiansByBirthdayAndName(birthdays, names);
-    }
+
+
 }
