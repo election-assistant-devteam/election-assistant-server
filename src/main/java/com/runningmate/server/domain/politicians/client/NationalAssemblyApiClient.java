@@ -1,4 +1,4 @@
-package com.runningmate.server.domain.politicians.utils;
+package com.runningmate.server.domain.politicians.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,7 +20,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class NaUtil {
+public class NationalAssemblyApiClient {
     private final String baseUrl = "https://open.assembly.go.kr/portal/openapi/ALLNAMEMBER";
 
     @Value("${runningmate.api.openNationalAssemblyInfo.key}")
