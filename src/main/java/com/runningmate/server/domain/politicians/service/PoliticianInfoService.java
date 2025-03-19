@@ -1,30 +1,24 @@
 package com.runningmate.server.domain.politicians.service;
 
+import com.runningmate.server.domain.politicians.client.ElectionCodeApiClient;
 import com.runningmate.server.domain.politicians.dto.external.candidateinfo.CandidateItem;
 import com.runningmate.server.domain.politicians.dto.external.electioncode.ElectionCodeItem;
-import com.runningmate.server.domain.politicians.model.Candidate;
 import com.runningmate.server.domain.politicians.model.Election;
 import com.runningmate.server.domain.politicians.model.Politician;
-import com.runningmate.server.domain.politicians.model.PoliticianDetail;
-import com.runningmate.server.domain.politicians.repository.CandidateRepository;
-import com.runningmate.server.domain.politicians.repository.ElectionRepository;
-import com.runningmate.server.domain.politicians.repository.PoliticianDetailRepository;
-import com.runningmate.server.domain.politicians.repository.PoliticianRepository;
 import com.runningmate.server.domain.politicians.utils.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class PoliticianInfoService {
 
-    private final ElectionCodeUtil electionCodeUtil;
+    private final ElectionCodeApiClient electionCodeApiClient;
+
     private final CandidateUtil candidateUtil;
     private final PoliticianUtil politicianUtil;
     private final ElectionUtil electionUtil;
@@ -32,11 +26,11 @@ public class PoliticianInfoService {
     public void savePoliticianInfos() {
         // 선거 코드 가져오기
         // 번호(num), 선거id(sgId), 선거이름(sgName), 선거코드(sgTypecode), 선거날짜(sgVotedate)
-        List<ElectionCodeItem> response = electionCodeUtil.fetchElectionCodes();
+        List<ElectionCodeItem> response = electionCodeApiClient.fetchElectionCodes();
         log.info("response {}", response.size());
 
         // 필터링
-        List<ElectionCodeItem> filteredByNationalAndYear = electionCodeUtil.getFilteredElectionCodeItems(response, 2024, "국회의원");
+        List<ElectionCodeItem> filteredByNationalAndYear = ElectionCodeUtil.getFilteredElectionCodeItems(response, 2024, "국회의원");
         log.info("filteredByNationalAndYear {}", filteredByNationalAndYear.size());
 
         // Election 저장 (중복 방지)
