@@ -1,5 +1,6 @@
 package com.runningmate.server.domain.politicians.service;
 
+import com.runningmate.server.domain.politicians.client.CandidateApiClient;
 import com.runningmate.server.domain.politicians.client.ElectionCodeApiClient;
 import com.runningmate.server.domain.politicians.dto.external.candidateinfo.CandidateItem;
 import com.runningmate.server.domain.politicians.dto.external.electioncode.ElectionCodeItem;
@@ -18,6 +19,7 @@ import java.util.List;
 public class PoliticianInfoService {
 
     private final ElectionCodeApiClient electionCodeApiClient;
+    private final CandidateApiClient candidateApiClient;
 
     private final CandidateUtil candidateUtil;
     private final PoliticianUtil politicianUtil;
@@ -39,7 +41,7 @@ public class PoliticianInfoService {
         }
 
         // 선거 Id와 선거 종류 코드로 후보자 정보 가져오기
-        List<CandidateItem> allCandidateItems = candidateUtil.fetchCandidateInfo(filteredByNationalAndYear);
+        List<CandidateItem> allCandidateItems = candidateApiClient.fetchCandidateInfo(filteredByNationalAndYear);
         log.info("allCandidateItems {}", allCandidateItems.size());
 
         // DB 저장
