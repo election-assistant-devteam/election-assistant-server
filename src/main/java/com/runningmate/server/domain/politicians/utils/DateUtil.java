@@ -10,7 +10,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Slf4j
-@Component
 public class DateUtil {
 
     public static Date convertDateType(String date) {

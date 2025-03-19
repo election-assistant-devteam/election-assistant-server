@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import static com.runningmate.server.global.common.response.status.BaseExceptionResponseStatus.PARSING_FAILED;
 
-@Component
 @RequiredArgsConstructor
 public class JsonParserUtil {
     private static final ObjectMapper objectMapper = new ObjectMapper();
