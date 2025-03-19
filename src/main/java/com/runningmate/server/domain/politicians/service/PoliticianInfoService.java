@@ -4,8 +4,10 @@ import com.runningmate.server.domain.politicians.client.CandidateApiClient;
 import com.runningmate.server.domain.politicians.client.ElectionCodeApiClient;
 import com.runningmate.server.domain.politicians.dto.external.candidateinfo.CandidateItem;
 import com.runningmate.server.domain.politicians.dto.external.electioncode.ElectionCodeItem;
+import com.runningmate.server.domain.politicians.model.Candidate;
 import com.runningmate.server.domain.politicians.model.Election;
 import com.runningmate.server.domain.politicians.model.Politician;
+import com.runningmate.server.domain.politicians.repository.CandidateRepository;
 import com.runningmate.server.domain.politicians.repository.ElectionRepository;
 import com.runningmate.server.domain.politicians.utils.*;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +26,10 @@ public class PoliticianInfoService {
     private final ElectionCodeApiClient electionCodeApiClient;
     private final CandidateApiClient candidateApiClient;
 
-    private final CandidateUtil candidateUtil;
     private final PoliticianUtil politicianUtil;
 
     private final ElectionRepository electionRepository;
+    private final CandidateRepository candidateRepository;
 
     public void savePoliticianInfos() {
         // 선거 코드 가져오기
@@ -56,8 +58,22 @@ public class PoliticianInfoService {
 
             Election election = findElectionByCandidateItem(allCandidateItem);
             // Candidate(후보자) 저장 (중복 방지)
-            candidateUtil.saveCandidate(allCandidateItem, politician, election);
+            saveCandidate(allCandidateItem, politician, election);
         }
+    }
+
+    public void saveCandidate(CandidateItem allCandidateItem, Politician politician, Election election) {
+        if (checkDuplicateCandidate(politician, election)) return;
+        Candidate candidate = Candidate.from(politician, election, allCandidateItem.getJdName());
+        candidateRepository.save(candidate);
+    }
+
+    private boolean checkDuplicateCandidate(Politician politician, Election election) {
+        Optional<Candidate> foundCandidate = candidateRepository.findByPoliticianAndElection(politician, election);
+        if (foundCandidate.isPresent()) {
+            return true;
+        }
+        return false;
     }
 
     public Election findElectionByCandidateItem(CandidateItem allCandidateItem) {
