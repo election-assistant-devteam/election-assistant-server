@@ -7,8 +7,10 @@ import com.runningmate.server.domain.politicians.dto.external.electioncode.Elect
 import com.runningmate.server.domain.politicians.model.Candidate;
 import com.runningmate.server.domain.politicians.model.Election;
 import com.runningmate.server.domain.politicians.model.Politician;
+import com.runningmate.server.domain.politicians.model.PoliticianDetail;
 import com.runningmate.server.domain.politicians.repository.CandidateRepository;
 import com.runningmate.server.domain.politicians.repository.ElectionRepository;
+import com.runningmate.server.domain.politicians.repository.PoliticianRepository;
 import com.runningmate.server.domain.politicians.utils.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +28,9 @@ public class PoliticianInfoService {
     private final ElectionCodeApiClient electionCodeApiClient;
     private final CandidateApiClient candidateApiClient;
 
-    private final PoliticianUtil politicianUtil;
-
     private final ElectionRepository electionRepository;
     private final CandidateRepository candidateRepository;
+    private final PoliticianRepository politicianRepository;
 
     public void savePoliticianInfos() {
         // 선거 코드 가져오기
@@ -53,7 +54,7 @@ public class PoliticianInfoService {
         // DB 저장
         for (CandidateItem allCandidateItem : allCandidateItems) {
             // Politician 저장 (중복 방지)
-            Politician politician = politicianUtil.savePolitician(allCandidateItem);
+            Politician politician = savePolitician(allCandidateItem);
             if (politician == null) continue;
 
             Election election = findElectionByCandidateItem(allCandidateItem);
@@ -80,6 +81,23 @@ public class PoliticianInfoService {
         Optional<Election> foundElection = electionRepository.findByDateAndType(DateUtil.convertDateType(allCandidateItem.getSgId()), allCandidateItem.getSgTypecode());
         Election election = foundElection.get();
         return election;
+    }
+
+    public Politician savePolitician(CandidateItem allCandidateItem) {
+        if (checkDuplicatePolitician(allCandidateItem.getName(), allCandidateItem.getJdName())) return null;
+        Politician politician = Politician.from(allCandidateItem);
+        PoliticianDetail politicianDetail = PoliticianDetail.from(politician, allCandidateItem);
+        politician.setPoliticianDetail(politicianDetail);
+        politicianRepository.save(politician);
+        return politician;
+    }
+
+    private boolean checkDuplicatePolitician(String name, String party) {
+        Optional<Politician> foundPolitician = politicianRepository.findByNameAndParty(name, party);
+        if(foundPolitician.isPresent()) {
+            return true;
+        }
+        return false;
     }
 
     public void saveElection(ElectionCodeItem electionCodeItem) {

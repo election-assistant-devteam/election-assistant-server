@@ -17,9 +17,6 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class PoliticianUtil {
-    private final PoliticianRepository politicianRepository;
-
-
 
     public static boolean politicianMatchesNaRow(Politician politician, NaRow naRow) {
 
@@ -38,22 +35,7 @@ public class PoliticianUtil {
         return isNameMatch && isBirthMatch;
     }
 
-    public Politician savePolitician(CandidateItem allCandidateItem) {
-        if (checkDuplicatePolitician(allCandidateItem.getName(), allCandidateItem.getJdName())) return null;
-        Politician politician = Politician.from(allCandidateItem);
-        PoliticianDetail politicianDetail = PoliticianDetail.from(politician, allCandidateItem);
-        politician.setPoliticianDetail(politicianDetail);
-        politicianRepository.save(politician);
-        return politician;
-    }
 
-    private boolean checkDuplicatePolitician(String name, String party) {
-        Optional<Politician> foundPolitician = politicianRepository.findByNameAndParty(name, party);
-        if(foundPolitician.isPresent()) {
-            return true;
-        }
-        return false;
-    }
 
 
 
