@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -26,6 +27,9 @@ public class Politician extends BaseEntity {
     private String party;
     @Column(length = 50, nullable = false)
     private String name;
+
+    @Column
+    private String imageUrl;
 
     @OneToOne(mappedBy = "politician", cascade = CascadeType.ALL, orphanRemoval = true)
     private PoliticianDetail politicianDetail;
@@ -49,5 +53,9 @@ public class Politician extends BaseEntity {
                 .name(item.getName())
                 .party(item.getJdName())
                 .build();
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

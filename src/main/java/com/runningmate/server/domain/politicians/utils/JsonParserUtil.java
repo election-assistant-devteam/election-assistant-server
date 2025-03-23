@@ -10,12 +10,11 @@ import org.springframework.stereotype.Component;
 
 import static com.runningmate.server.global.common.response.status.BaseExceptionResponseStatus.PARSING_FAILED;
 
-@Component
 @RequiredArgsConstructor
 public class JsonParserUtil {
-    private final ObjectMapper objectMapper;
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public <T extends CommonResponseBody<?>> CommonApiResponse<T> parseJson(String responseBody, Class<T> bodyClass) {
+    public static <T extends CommonResponseBody<?>> CommonApiResponse<T> parseJson(String responseBody, Class<T> bodyClass) {
         try {
             return objectMapper.readValue(responseBody, objectMapper.getTypeFactory()
                     .constructParametricType(CommonApiResponse.class, bodyClass));

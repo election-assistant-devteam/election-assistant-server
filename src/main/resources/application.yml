@@ -102,3 +102,6 @@ runningmate:
   api:
     publicData:
       key: ${PUBLIC_DATA_API_KEY}
+    openNationalAssemblyInfo:
+      key: ${NATIONAL_DATA_API_KEY}
+

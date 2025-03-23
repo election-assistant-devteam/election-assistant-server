@@ -10,19 +10,30 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Slf4j
-@Component
 public class DateUtil {
-
-    private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 
     public static Date convertDateType(String date) {
 
+        SimpleDateFormat formatterYYYYMMDD  = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat formatterYYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
+
         Date convertedDate = null;
         try {
-            convertedDate = formatter.parse(date);
+            if(date.matches("\\d{4}-\\d{2}-\\d{2}")){
+                convertedDate = formatterYYYY_MM_DD.parse(date);
+            }else if(date.matches("\\d{8}")) {
+                convertedDate = formatterYYYYMMDD.parse(date);
+            }else{
+                return null;
+            }
         } catch (ParseException e) {
+            log.info("fail reason {}", date);
             throw new ParsingFailedException(BaseExceptionResponseStatus.PARSING_FAILED);
         }
         return convertedDate;
+    }
+
+    public static boolean compareDate(Date date1, Date date2){
+        return date1.compareTo(date2) == 0;
     }
 }
