@@ -88,4 +88,5 @@ public class CandidateApiClient {
         //log.info("itemSize {}", allCandidateItems.size()); // 953
         return allCandidateItems;
     }
+
 }
