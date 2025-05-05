@@ -20,13 +20,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CandidateService {
 
-    private final ElectionRepository electionRepository;
     private final CandidateRepository candidateRepository;
+    private final ElectionRepository electionRepository;
 
     public CandidatesResponse fetchElectionInfo(Long electionId, Integer lastId){
         // 선거 ID로 선거 찾기
         Optional<Election> fetchedElection = electionRepository.findById(electionId);
-        // 선거 존재 여부 검증
+
         if(fetchedElection.isEmpty())
             return null;
 
@@ -34,13 +34,25 @@ public class CandidateService {
         log.info("election {}", election.getName());
 
         // 선거 후보자들 찾기
-        List<Candidate> candidates = candidateRepository.findByElection(election);
+        List<Politician> collect = findElectionCandidates(election);
 
+        // DTO 생성
+        ArrayList<CandidateSimpleInfo> candidatesSimpleInfo = getCandidateSimpleInfos(collect);
+
+        // 범위에 맞게 후보자 가져오기
+        return getPaginatedCandidates(lastId, candidatesSimpleInfo, 10);
+
+    }
+
+    public List<Politician> findElectionCandidates(Election election) {
+        List<Candidate> candidates = candidateRepository.findByElection(election);
         List<Politician> collect = candidates.stream()
                 .map(Candidate::getPolitician)
                 .toList();
+        return collect;
+    }
 
-        // DTO 생성
+    public ArrayList<CandidateSimpleInfo> getCandidateSimpleInfos(List<Politician> collect) {
         ArrayList<CandidateSimpleInfo> candidatesSimpleInfo = new ArrayList<>();
         for (Politician politician : collect) {
             CandidateSimpleInfo candidateSimpleInfo = CandidateSimpleInfo.builder()
@@ -55,27 +67,28 @@ public class CandidateService {
             log.info("politician {}", politician.getName());
             log.info("politician {}", politician.getParty());
         }
+        return candidatesSimpleInfo;
+    }
 
+    private CandidatesResponse getPaginatedCandidates(int lastId, List<CandidateSimpleInfo> all, int pageSize) {
         boolean isMore = true;
         ArrayList<CandidateSimpleInfo> subList;
-        if (lastId >= candidatesSimpleInfo.size()) {
+
+        if (lastId >= all.size()) {
             subList = new ArrayList<>();
             isMore = false;
         } else {
-            int toIndex = Math.min(lastId + 10, candidatesSimpleInfo.size());
-            log.info("lastId {}, toIndex {}", lastId, toIndex);
-            subList = new ArrayList<>(candidatesSimpleInfo.subList(lastId, toIndex));
-
-            isMore = toIndex < candidatesSimpleInfo.size();
+            int toIndex = Math.min(lastId + pageSize, all.size());
+            subList = new ArrayList<>(all.subList(lastId, toIndex));
+            isMore = toIndex < all.size();
             lastId = toIndex;
         }
 
-        // 10개씩 줘야함
         return CandidatesResponse.builder()
                 .candidates(subList)
                 .lastId(lastId)
                 .hasMore(isMore)
                 .build();
-
     }
+
 }
