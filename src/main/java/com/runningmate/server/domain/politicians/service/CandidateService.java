@@ -2,6 +2,7 @@ package com.runningmate.server.domain.politicians.service;
 
 import com.runningmate.server.domain.politicians.dto.internal.CandidateSimpleInfo;
 import com.runningmate.server.domain.politicians.dto.internal.CandidatesResponse;
+import com.runningmate.server.domain.politicians.exception.ElectionNotFoundException;
 import com.runningmate.server.domain.politicians.model.Candidate;
 import com.runningmate.server.domain.politicians.model.Election;
 import com.runningmate.server.domain.politicians.model.Politician;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import static com.runningmate.server.global.common.response.status.BaseExceptionResponseStatus.FIND_ELECTION_FAILED;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,9 +28,8 @@ public class CandidateService {
 
     public CandidatesResponse fetchElectionInfo(Long electionId, Integer lastId){
         // 선거 ID로 선거 찾기
-        Optional<Election> fetchedElection = electionRepository.findById(electionId);
-        if(fetchedElection.isEmpty()) return null;
-        Election election = fetchedElection.get();
+        Election election = electionRepository.findById(electionId)
+                .orElseThrow(() -> new ElectionNotFoundException(FIND_ELECTION_FAILED));
         log.info("election {}", election.getName());
 
         // 페이지네이션 - 후보자 가져오기
