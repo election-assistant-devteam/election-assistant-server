@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -37,7 +38,7 @@ public class CandidateService {
         List<Politician> collect = findElectionCandidates(election);
 
         // DTO 생성
-        ArrayList<CandidateSimpleInfo> candidatesSimpleInfo = getCandidateSimpleInfos(collect);
+        List<CandidateSimpleInfo> candidatesSimpleInfo = getCandidateSimpleInfos(collect);
 
         // 범위에 맞게 후보자 가져오기
         return getPaginatedCandidates(lastId, candidatesSimpleInfo, 10);
@@ -52,22 +53,20 @@ public class CandidateService {
         return collect;
     }
 
-    public ArrayList<CandidateSimpleInfo> getCandidateSimpleInfos(List<Politician> collect) {
-        ArrayList<CandidateSimpleInfo> candidatesSimpleInfo = new ArrayList<>();
-        for (Politician politician : collect) {
-            CandidateSimpleInfo candidateSimpleInfo = CandidateSimpleInfo.builder()
-                    .id(politician.getId().intValue())
-                    .name(politician.getName())
-                    .party(politician.getParty())
-                    .imageUrl(politician.getImageUrl())
-                    .build();
-            candidatesSimpleInfo.add(candidateSimpleInfo);
+    public List<CandidateSimpleInfo> getCandidateSimpleInfos(List<Politician> collect) {
+        return collect.stream()
+                .map(politician -> {
+                    log.info("politician {}", politician.getName());
+                    log.info("politician {}", politician.getParty());
 
-
-            log.info("politician {}", politician.getName());
-            log.info("politician {}", politician.getParty());
-        }
-        return candidatesSimpleInfo;
+                    return CandidateSimpleInfo.builder()
+                            .id(politician.getId().intValue())
+                            .name(politician.getName())
+                            .party(politician.getParty())
+                            .imageUrl(politician.getImageUrl())
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
 
     private CandidatesResponse getPaginatedCandidates(int lastId, List<CandidateSimpleInfo> all, int pageSize) {
