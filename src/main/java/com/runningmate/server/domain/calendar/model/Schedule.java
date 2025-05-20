@@ -1,5 +1,6 @@
 package com.runningmate.server.domain.calendar.model;
 
+import com.runningmate.server.domain.politicians.model.Election;
 import com.runningmate.server.domain.user.model.User;
 import com.runningmate.server.global.common.model.BaseEntity;
 import jakarta.persistence.*;
@@ -8,6 +9,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 
 @ToString
 @Getter
@@ -39,5 +41,14 @@ public class Schedule extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public static Schedule from(Election election) {
+        return Schedule.builder()
+                .date(election.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
+                .name(election.getName())
+                .type(ScheduleType.ELECTION)
+                .electionId(election.getId())
+                .build();
+    }
 }
 
