@@ -17,7 +17,7 @@ import java.time.LocalDate;
 import java.util.Random;
 
 @SpringBootTest
-@Transactional
+//@Transactional
 class CalendarServiceTest {
     @Autowired private UserRepository userRepository;
     @Autowired private ScheduleRepository scheduleRepository;
