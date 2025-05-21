@@ -54,7 +54,7 @@ public class SecurityConfig {
         // 엔드포인트별 인증인가 정책 설정
         http
                 .authorizeHttpRequests(authorizeHttpRequestCustomizer -> authorizeHttpRequestCustomizer
-                        .requestMatchers("/auth/login", "/users").permitAll()
+                        .requestMatchers("/auth/login", "/users", "/calendar/schedules").permitAll()
                         .requestMatchers(SWAGGER_ENDPOINTS).permitAll()
                         .anyRequest().authenticated()
                 );
