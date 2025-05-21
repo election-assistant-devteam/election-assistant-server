@@ -14,6 +14,7 @@ public class LoginResponse {
     private String access;
     private String refresh;
     private String nickname;
+    private Long id;
     private String politicianOfInterest;
     private String partyOfInterest;
 
@@ -22,6 +23,7 @@ public class LoginResponse {
                 .access(accessToken)
                 .refresh(refreshToken)
                 .nickname(user.getNickname())
+                .id(user.getId())
                 .politicianOfInterest(user.getPoliticianOfInterest())
                 .partyOfInterest(user.getPartyOfInterest())
                 .build();
