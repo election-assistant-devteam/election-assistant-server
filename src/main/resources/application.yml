@@ -3,9 +3,9 @@ spring:
     name: server
   profiles:
     group:
-      local : local-db, dev-port
-      dev: dev-db, dev-port
-      prod: prod-db, prod-port
+      local : local-db, dev-port, common
+      dev: dev-db, dev-port, common
+      prod: prod-db, prod-port, common
     active: local
   mvc:
     throw-exception-if-no-handler-found: true
@@ -58,7 +58,7 @@ spring:
     activate:
       on-profile: prod-db
   datasource:
-    url: ${PROD_DATASOURCE_USERNAME}
+    url: ${PROD_DATASOURCE_URL}
     username: ${PROD_DATASOURCE_USERNAME}
     password: ${PROD_DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -86,3 +86,22 @@ spring:
       on-profile: prod-port
 server:
   port: 9002
+---
+spring:
+  config:
+    activate:
+      on-profile: common
+
+runningmate:
+  jwt:
+    secret: ${JWT_SECRET}
+    access:
+      expiredMs: ${JWT_ACCESS_EXPIRED}
+    refresh:
+      expiredMs: ${JWT_REFRESH_EXPIRED}
+  api:
+    publicData:
+      key: ${PUBLIC_DATA_API_KEY}
+    openNationalAssemblyInfo:
+      key: ${NATIONAL_DATA_API_KEY}
+

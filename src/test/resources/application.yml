@@ -1,0 +1,32 @@
+spring:
+  datasource:
+#    url: jdbc:h2:tcp:localhost/~/runningmate h2서버모드
+#    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:tcp://localhost/~/test
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        highlight_sql: true
+        dialect : org.hibernate.dialect.H2Dialect
+
+server:
+  port: 9001
+
+runningmate:
+  jwt:
+    secret: secretkey1234secretkey1234secretkey1234secretkey1234secretkey1234secretkey1234
+    access:
+      expiredMs: 10000000
+    refresh:
+      expiredMs: 10000000
+
+  api:
+    publicData:
+      key: ${PUBLIC_DATA_API_KEY}
