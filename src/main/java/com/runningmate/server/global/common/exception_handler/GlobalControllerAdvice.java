@@ -5,7 +5,6 @@ import com.runningmate.server.global.common.response.BaseErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.TypeMismatchException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -39,14 +38,4 @@ public class GlobalControllerAdvice {
         log.error("[handle_RuntimeException]", e);
         return new BaseErrorResponse(INTERNAL_SERVER_ERROR);
     }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public BaseErrorResponse handle_MethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        log.error("[handle_MethodArgumentNotValidException]", e);
-        String defaultMessage = e.getBindingResult().getFieldError().getDefaultMessage();
-        return new BaseErrorResponse(BAD_REQUEST, defaultMessage);
-    }
-
-
 }
