@@ -12,6 +12,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -27,14 +32,15 @@ public class SecurityConfig {
     };
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // csrf 비활성화
         http
-                .csrf(csrfConfigurer->csrfConfigurer.disable());
+                .cors(cors->cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrfConfigurer -> csrfConfigurer.disable());
 
         // 폼 로그인 비활성화
         http
-                .formLogin(loginConfigurer->loginConfigurer.disable());
+                .formLogin(loginConfigurer -> loginConfigurer.disable());
 
         //  기본 인증 로그인 사용 X
         http
@@ -43,7 +49,7 @@ public class SecurityConfig {
         // 인증정보를 서버에 담지 않음
         http
                 .sessionManagement(sessionManagementConfigurer ->
-                        sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS) );
+                        sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         // 엔드포인트별 인증인가 정책 설정
         http
@@ -58,8 +64,23 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         http
-                .exceptionHandling(configurer->configurer.authenticationEntryPoint(customAuthenticationEntryPoint));
+                .exceptionHandling(configurer -> configurer.authenticationEntryPoint(customAuthenticationEntryPoint));
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration cfg = new CorsConfiguration();
+        // 실제 운영 도메인만 허용하려면 "*" 대신 명시적으로 적어 주세요.
+        cfg.setAllowedOriginPatterns(List.of("*"));
+        cfg.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+        cfg.setAllowedHeaders(List.of("*"));            // Content-Type, Authorization 등 모두 허용
+        cfg.setAllowCredentials(true);                  // 쿠키/인증정보 허용
+        cfg.setMaxAge(3600L);                           // preflight 캐시 1시간
+
+        UrlBasedCorsConfigurationSource src = new UrlBasedCorsConfigurationSource();
+        src.registerCorsConfiguration("/**", cfg);
+        return src;
     }
 }
