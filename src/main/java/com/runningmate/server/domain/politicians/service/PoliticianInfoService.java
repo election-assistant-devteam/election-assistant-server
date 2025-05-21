@@ -1,5 +1,7 @@
 package com.runningmate.server.domain.politicians.service;
 
+import com.runningmate.server.domain.calendar.model.Schedule;
+import com.runningmate.server.domain.calendar.repository.ScheduleRepository;
 import com.runningmate.server.domain.politicians.client.CandidateApiClient;
 import com.runningmate.server.domain.politicians.client.ElectionCodeApiClient;
 import com.runningmate.server.domain.politicians.dto.external.candidateinfo.CandidateItem;
@@ -31,6 +33,7 @@ public class PoliticianInfoService {
     private final ElectionRepository electionRepository;
     private final CandidateRepository candidateRepository;
     private final PoliticianRepository politicianRepository;
+    private final ScheduleRepository scheduleRepository;
 
     public void savePoliticianInfos() {
         // 선거 코드 가져오기
@@ -103,7 +106,10 @@ public class PoliticianInfoService {
     public void saveElection(ElectionCodeItem electionCodeItem) {
         if (checkDuplicateElection(electionCodeItem.getSgVotedate(), electionCodeItem.getSgTypecode())) return;
         Election election = Election.from(electionCodeItem);
-        electionRepository.save(election);
+        election = electionRepository.save(election);
+
+        Schedule schedule = Schedule.from(election);
+        scheduleRepository.save(schedule);
     }
 
     private boolean checkDuplicateElection(String electionId, String electionCode) {
