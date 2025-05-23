@@ -61,6 +61,7 @@ public class SecurityConfig {
 
         // 토큰 검증 필터 추가
         http
+                .securityMatcher("calendar/schedules")
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         http
