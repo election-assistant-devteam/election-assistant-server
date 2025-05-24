@@ -2,6 +2,7 @@ package com.runningmate.server.global.common.exception_handler;
 
 import com.runningmate.server.global.common.exception.BadRequestException;
 import com.runningmate.server.global.common.response.BaseErrorResponse;
+import com.runningmate.server.global.common.response.BaseErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.TypeMismatchException;
 import org.springframework.http.HttpStatus;
