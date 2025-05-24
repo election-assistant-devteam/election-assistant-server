@@ -4,6 +4,8 @@ import com.runningmate.server.domain.auth.exception.LoginFailedException;
 import com.runningmate.server.domain.user.exception.SameUserExistsException;
 import com.runningmate.server.global.common.response.BaseErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -14,6 +16,7 @@ import static com.runningmate.server.global.common.response.status.BaseException
 
 @Slf4j
 @RestControllerAdvice
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class AuthControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(LoginFailedException.class)
