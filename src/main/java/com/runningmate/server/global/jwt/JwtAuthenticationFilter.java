@@ -44,9 +44,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             //스프링 시큐리티 인증 토큰 생성하고 세션에 저장
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
 
+
+        }
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return request.getRequestURI().equals("calendar/schedules");
     }
 
     private static String extractToken(HttpServletRequest request) {
