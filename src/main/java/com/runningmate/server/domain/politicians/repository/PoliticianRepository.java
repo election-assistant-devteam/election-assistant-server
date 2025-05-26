@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +17,7 @@ public interface PoliticianRepository extends JpaRepository<Politician, Long> {
             "WHERE d.birth IN :birthdays " +
             "AND p.name IN :names")
     List<Politician> findPoliticiansByBirthdayAndName(
-            @Param("birthdays") List<Date> birthdays,
+            @Param("birthdays") List<LocalDate> birthdays,
             @Param("names") List<String> names
     );
 }
