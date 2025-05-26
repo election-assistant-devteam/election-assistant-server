@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -24,7 +24,7 @@ public class PoliticianDetail extends BaseEntity {
     @Column(nullable = false)
     private Integer age;
     @Column(nullable = false)
-    private Date birth;
+    private LocalDate birth;
     @Column(nullable = false)
     private String habitation;
     @Column(nullable = false)
@@ -46,7 +46,7 @@ public class PoliticianDetail extends BaseEntity {
 
 
     @Builder
-    public PoliticianDetail(Politician politician, Integer age, Date birth, String habitation, String family, String levelOfEducation, String career, String pastCrime, String pledge, String detail) {
+    public PoliticianDetail(Politician politician, Integer age, LocalDate birth, String habitation, String family, String levelOfEducation, String career, String pastCrime, String pledge, String detail) {
         this.politician = politician;
         this.age = age;
         this.birth = birth;
@@ -60,8 +60,7 @@ public class PoliticianDetail extends BaseEntity {
     }
 
     public static PoliticianDetail from(Politician politician, CandidateItem item) {
-        DateUtil dateUtil = new DateUtil();
-        Date date = dateUtil.convertDateType(item.getBirthday());
+        LocalDate date = DateUtil.convertDateType(item.getBirthday());
         StringBuilder career = new StringBuilder();
         career.append(item.getCareer1()).append('\n');
         career.append(item.getCareer2()).append('\n');

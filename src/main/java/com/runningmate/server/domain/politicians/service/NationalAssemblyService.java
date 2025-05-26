@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -32,8 +32,14 @@ public class NationalAssemblyService {
 
         // 2. 기존 DB에서 정치인 정보 가져오기
         // 국회 API에서 가져온 생일과 이름 기준으로 필요한 정치인만 가져오기
-        List<Date> birthdays = naRows.stream()
-                .map(naRow -> convertDateType(naRow.getBirdyDt()))
+        List<LocalDate> birthdays = naRows.stream()
+                .map(naRow -> {
+                    LocalDate converted = convertDateType(naRow.getBirdyDt());
+                    if (converted == null){
+                        log.warn("파싱 실패: 이름={}, 생일={}", naRow.getNaasNm(), naRow.getBirdyDt());
+                    }
+                    return converted;
+                })
                 .filter(Objects::nonNull) // 변환 실패한 경우 제외
                 .collect(Collectors.toList());
         List<String> names = naRows.stream().map(NaRow::getNaasNm).collect(Collectors.toList());
@@ -66,7 +72,7 @@ public class NationalAssemblyService {
         politicianRepository.saveAll(politicians);
     }
 
-    public List<Politician> findPoliticiansByBirthdayAndParty(List<Date> birthdays, List<String> names) {
+    public List<Politician> findPoliticiansByBirthdayAndParty(List<LocalDate> birthdays, List<String> names) {
         return politicianRepository.findPoliticiansByBirthdayAndName(birthdays, names);
     }
 
