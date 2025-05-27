@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -113,7 +113,7 @@ public class PoliticianInfoService {
     }
 
     private boolean checkDuplicateElection(String electionId, String electionCode) {
-        Date electionDate = DateUtil.convertDateType(electionId);
+        LocalDate electionDate = DateUtil.convertDateType(electionId);
         Optional<Election> foundElection = electionRepository.findByDateAndType(electionDate, electionCode);
         if(foundElection.isPresent()) return true;
         return false;

@@ -1,6 +1,5 @@
 package com.runningmate.server.domain.politicians.model;
 
-import com.runningmate.server.domain.politicians.dto.external.candidateinfo.CandidateItem;
 import com.runningmate.server.domain.politicians.dto.external.electioncode.ElectionCodeItem;
 import com.runningmate.server.domain.politicians.utils.DateUtil;
 import com.runningmate.server.global.common.model.BaseEntity;
@@ -11,8 +10,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -27,22 +26,22 @@ public class Election extends BaseEntity {
     @Column(length = 100, nullable = false)
     private String name;
     @Column(nullable = false)
-    private Date date;
+    private LocalDate date;
     @Column(nullable = false)
     private String type;
     @OneToMany(mappedBy = "election", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Candidate> candidates = new ArrayList<>();
 
     @Builder
-    public Election(String name, Date date, String type) {
+    public Election(String name, LocalDate date, String type) {
         this.name = name;
         this.date = date;
         this.type = type;
     }
 
     public static Election from(ElectionCodeItem item) {
-        DateUtil dateUtil = new DateUtil();
-        Date date = dateUtil.convertDateType(item.getSgVotedate());
+
+        LocalDate date = DateUtil.convertDateType(item.getSgVotedate());
 
         return Election.builder()
                 .name(item.getSgName())

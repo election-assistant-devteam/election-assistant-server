@@ -3,37 +3,33 @@ package com.runningmate.server.domain.politicians.utils;
 import com.runningmate.server.domain.politicians.exception.ParsingFailedException;
 import com.runningmate.server.global.common.response.status.BaseExceptionResponseStatus;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 @Slf4j
 public class DateUtil {
 
-    public static Date convertDateType(String date) {
+    public static LocalDate convertDateType(String date) {
 
-        SimpleDateFormat formatterYYYYMMDD  = new SimpleDateFormat("yyyyMMdd");
-        SimpleDateFormat formatterYYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
+        DateTimeFormatter formatterYYYY_MM_DD = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatterYYYYMMDD  = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-        Date convertedDate = null;
         try {
             if(date.matches("\\d{4}-\\d{2}-\\d{2}")){
-                convertedDate = formatterYYYY_MM_DD.parse(date);
-            }else if(date.matches("\\d{8}")) {
-                convertedDate = formatterYYYYMMDD.parse(date);
-            }else{
-                return null;
+                return LocalDate.parse(date, formatterYYYY_MM_DD);
             }
-        } catch (ParseException e) {
-            log.info("fail reason {}", date);
-            throw new ParsingFailedException(BaseExceptionResponseStatus.PARSING_FAILED);
+            if(date.matches("\\d{8}")) {
+                return LocalDate.parse(date, formatterYYYYMMDD);
+            }
+            return null; // 아무런 포맷에 해당 안 되는 경우 (없어도 됨)
+        } catch (DateTimeParseException e) {
+            return null;
         }
-        return convertedDate;
     }
 
-    public static boolean compareDate(Date date1, Date date2){
-        return date1.compareTo(date2) == 0;
+    public static boolean compareDate(LocalDate date1, LocalDate date2){
+        return date1.isEqual(date2);
     }
 }

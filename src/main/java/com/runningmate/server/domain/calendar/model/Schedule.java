@@ -44,7 +44,7 @@ public class Schedule extends BaseEntity {
 
     public static Schedule from(Election election) {
         return Schedule.builder()
-                .date(election.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
+                .date(election.getDate())
                 .name(election.getName())
                 .type(ScheduleType.ELECTION)
                 .electionId(election.getId())

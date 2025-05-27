@@ -1,17 +1,12 @@
 package com.runningmate.server.domain.politicians.utils;
 
-import com.runningmate.server.domain.politicians.dto.external.candidateinfo.CandidateItem;
 import com.runningmate.server.domain.politicians.dto.external.nationassembly.NaRow;
 import com.runningmate.server.domain.politicians.model.Politician;
 import com.runningmate.server.domain.politicians.model.PoliticianDetail;
-import com.runningmate.server.domain.politicians.repository.PoliticianRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,7 +18,7 @@ public class PoliticianUtil {
         boolean isNameMatch = politician.getName().equals(naRow.getNaasNm());
 
         // 국회 - String -> Date 변환
-        Date birth2Date = DateUtil.convertDateType(naRow.getBirdyDt());
+        LocalDate birth2Date = DateUtil.convertDateType(naRow.getBirdyDt());
         if(birth2Date == null)
             return false;
 
@@ -33,10 +28,4 @@ public class PoliticianUtil {
 
         return isNameMatch && isBirthMatch;
     }
-
-
-
-
-
-
 }
