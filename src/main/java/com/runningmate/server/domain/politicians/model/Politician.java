@@ -27,7 +27,6 @@ public class Politician extends BaseEntity {
     private String party;
     @Column(length = 50, nullable = false)
     private String name;
-
     @Column
     private String imageUrl;
 
