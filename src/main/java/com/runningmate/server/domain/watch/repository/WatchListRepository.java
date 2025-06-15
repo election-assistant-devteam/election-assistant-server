@@ -12,5 +12,5 @@ public interface WatchListRepository extends JpaRepository<UserWatchList, UserWa
 
     // 특정 정치인을 특정 유저가 지켜보는지 여부
     boolean existsById(UserWatchListId id);
-
+    List<UserWatchList> findByUser_Id(Long userId);
 }
