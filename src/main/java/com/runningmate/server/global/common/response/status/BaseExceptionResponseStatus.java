@@ -34,7 +34,9 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
     TOKEN_AUTHENTICATION_FAILED(40100, "토큰 인증에 실패했습니다."),
 
     // 선거 관련 에러
-    FIND_ELECTION_FAILED(40400, "존재하지 않는 선거입니다.");
+    FIND_ELECTION_FAILED(40400, "존재하지 않는 선거입니다."),
+    // 정치인 관련 에러
+    POLITICIAN_NOT_FOUND(40400, "존재하지 않는 정치인입니다.");
 
     private final boolean success = false;
     private final int code;
