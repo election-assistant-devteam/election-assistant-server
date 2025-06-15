@@ -47,4 +47,13 @@ public class WatchListService {
     }
 
 
+    public List<WatchedPoliticianResponse> getWatchedPoliticians(Long userId) {
+        List<UserWatchList> watchList = watchListRepository.findByUser_Id(userId);
+
+        return watchList.stream()
+                .map(watch -> WatchedPoliticianResponse.from(watch.getPolitician()))
+                .toList();
+    }
+
+
 }
