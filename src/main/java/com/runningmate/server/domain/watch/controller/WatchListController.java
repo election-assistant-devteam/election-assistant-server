@@ -20,4 +20,10 @@ public class WatchListController {
         AddWatchListResponse addWatchListResponse = watchListService.followPolitician(userId, politicianId);
         return new BaseResponse<>(addWatchListResponse);
     }
+
+    @GetMapping("/politicians/watch")
+    public BaseResponse<List<WatchedPoliticianResponse>> getWatchList(@LoginUserId Long userId) {
+        List<WatchedPoliticianResponse> response = watchListService.getWatchedPoliticians(userId);
+        return new BaseResponse<>(response);
+    }
 }
