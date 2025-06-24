@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 public class ServerApplication {
 
     public static void main(String[] args) {
-        WebDriverManager.chromedriver().browserVersion("121").setup();
+        WebDriverManager.chromedriver().setup();
         SpringApplication.run(ServerApplication.class, args);
     }
 
