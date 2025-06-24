@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -29,7 +30,12 @@ public class NewsService {
         options.addArguments("--remote-allow-origins=*");
         options.addArguments("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
 
-        WebDriver driver = new ChromeDriver(options);
+        ChromeDriverService service = new ChromeDriverService.Builder()
+                .withLogOutput(System.err)      // STDERR 로 바로 출력
+                .withVerbose(true)               // 상세 로그
+                .build();
+
+        WebDriver driver = new ChromeDriver(service, options);
         List<Map<String, String>> newsList = new ArrayList<>();
 
         try {
