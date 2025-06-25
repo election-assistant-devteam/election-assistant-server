@@ -1,5 +1,6 @@
 package com.runningmate.server.domain.news.controller;
 
+import com.runningmate.server.domain.news.cache.NewsCache;
 import com.runningmate.server.domain.news.service.NewsService;
 import com.runningmate.server.global.common.response.BaseResponse;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,9 +12,14 @@ import java.util.Map;
 @RestController
 public class NewsController {
 
+    private final NewsCache cache;
+
+    public NewsController(NewsCache cache) {
+        this.cache = cache;
+    }
+
     @GetMapping("/news")
     public BaseResponse<Object> getNews() {
-        List<Map<String, String>> news = NewsService.scrapeNews();
-        return new BaseResponse<>(news);
+        return new BaseResponse<>(cache.getCache());
     }
 }

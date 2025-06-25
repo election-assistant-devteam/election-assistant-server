@@ -1,5 +1,6 @@
 package com.runningmate.server.domain.news.service;
 
+import com.runningmate.server.domain.news.model.NewsItem;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -19,10 +20,13 @@ import java.util.Map;
 @Service
 public class NewsService {
 
-    public static List<Map<String, String>> scrapeNews() {
+    public static List<NewsItem> scrapeNews() {
 
         ChromeOptions options = new ChromeOptions();
-        options.setBinary("/usr/bin/chromium-browser");
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("linux")) {
+            options.setBinary("/usr/bin/chromium-browser");    // 컨테이너에서만 필요
+        }
         options.addArguments("--headless");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
@@ -36,7 +40,7 @@ public class NewsService {
                 .build();
 
         WebDriver driver = new ChromeDriver(service, options);
-        List<Map<String, String>> newsList = new ArrayList<>();
+        List<NewsItem> newsList = new ArrayList<>();
 
         try {
             driver.get("https://news.naver.com/section/100");
@@ -47,19 +51,14 @@ public class NewsService {
                     ));
 
             List<WebElement> links = driver.findElements(By.cssSelector(".sa_text > a"));
-            List<WebElement> headlines = driver.findElements(By.cssSelector(".sa_text_strong"));
+            List<WebElement> titles = driver.findElements(By.cssSelector(".sa_text_strong"));
             List<WebElement> imgs = driver.findElements(By.cssSelector(".section_article img"));
 
-            for (int i = 0; i < headlines.size(); i++) {
-                String title = headlines.get(i).getText();
-                String link = links.get(i).getAttribute("href");
-                String imgUrl = imgs.get(i).getAttribute("src");
-
-                Map<String, String> newsItem = new HashMap<>();
-                newsItem.put("title", title);
-                newsItem.put("link", link);
-                newsItem.put("image", imgUrl);  // 로컬 저장 안하고 URL 그대로 사용
-                newsList.add(newsItem);
+            for (int i = 0; i < titles.size(); i++) {
+                newsList.add(new NewsItem(
+                        titles.get(i).getText(),
+                        links.get(i).getAttribute("href"),
+                        imgs.get(i).getAttribute("src")));
             }
 
 //            System.out.println("✅ news_data.json 저장 완료");
