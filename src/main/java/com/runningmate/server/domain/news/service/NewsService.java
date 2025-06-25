@@ -1,6 +1,8 @@
 package com.runningmate.server.domain.news.service;
 
 import com.runningmate.server.domain.news.model.NewsItem;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import jakarta.annotation.PostConstruct;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -13,17 +15,41 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class NewsService {
 
+    private static final String os = System.getProperty("os.name").toLowerCase();
+
+    private static String detectChromiumMajor() {
+        try {
+            Process p = new ProcessBuilder("/usr/bin/chromium", "--version").start();
+            try (var r = p.inputReader()) {
+                String out = r.readLine();           // "Chromium 126.0.6478.114"
+                return out.replaceAll("\\D+", "").substring(0, 3);  // "126"
+            }
+        } catch (Exception e) { return ""; }
+    }
+
+    @PostConstruct
+    public void initDriver() {
+        if (os.contains("linux")) {
+            String major = detectChromiumMajor();    // "126"
+            WebDriverManager.chromedriver()
+                    .clearResolutionCache()
+                    .browserVersion(major)
+                    .setup();
+        } else {
+            WebDriverManager.chromedriver()
+                    .clearResolutionCache()
+                    .setup();
+        }
+    }
+
     public static List<NewsItem> scrapeNews() {
 
         ChromeOptions options = new ChromeOptions();
-        String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("linux")) {
             options.setBinary("/usr/bin/chromium-browser");    // 컨테이너에서만 필요
         }
