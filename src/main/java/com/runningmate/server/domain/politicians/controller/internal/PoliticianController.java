@@ -21,4 +21,14 @@ public class PoliticianController {
         PoliticianResponse politicianResponse = politicianService.getPoliticianDetail(politicianId);
         return new BaseResponse<>(politicianResponse);
     }
+
+    @GetMapping("/politicians")
+    public BaseResponse<Object> getPoliticians(){
+        return new BaseResponse<>(politicianService.getPoliticianNames());
+    }
+
+    @GetMapping("/parties")
+    public BaseResponse<Object> getParty(){
+        return new BaseResponse<>(politicianService.getPartyNames());
+    }
 }
