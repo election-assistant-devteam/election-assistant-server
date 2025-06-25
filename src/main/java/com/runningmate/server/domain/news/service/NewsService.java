@@ -24,7 +24,7 @@ public class NewsService {
 
     private static String detectChromiumMajor() {
         try {
-            Process p = new ProcessBuilder("/usr/bin/chromium", "--version").start();
+            Process p = new ProcessBuilder("/usr/bin/chromium-browser", "--version").start();
             try (var r = p.inputReader()) {
                 String out = r.readLine();           // "Chromium 126.0.6478.114"
                 return out.replaceAll("\\D+", "").substring(0, 3);  // "126"
