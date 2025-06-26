@@ -13,6 +13,7 @@ import static com.runningmate.server.global.common.response.status.BaseException
 @Service
 public class UserService {
     private final UserRepository userRepository;
+
     public void createUser(String username, String password, String nickname, String email) {
         if(validateUsername(username)){
             throw new SameUserExistsException(SAME_USERNAME_EXISTS);
@@ -27,6 +28,21 @@ public class UserService {
                 .email(email)
                 .build();
         userRepository.save(newUser);
+    }
+
+    public void updateUser(Long prevId, String password, String nickname) {
+        System.out.println("password = " + password);
+        System.out.println("nickname = " + nickname);
+        User user = userRepository.findById(prevId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + prevId));
+
+        if (password != null) {
+            userRepository.updatePassword(prevId, password);
+        }
+
+        if (nickname != null) {
+            userRepository.updateNickname(prevId, nickname);
+        }
     }
 
     private boolean validateUsername(String username) {
