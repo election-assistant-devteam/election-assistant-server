@@ -1,14 +1,23 @@
 package com.runningmate.server.domain.community.model;
 
+import com.runningmate.server.domain.user.model.User;
 import com.runningmate.server.global.common.model.BaseEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@SQLDelete(sql = "UPDATE user SET status='N' where id = ?")
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@SQLDelete(sql = "UPDATE post SET status='N' where id = ?")
 @SQLRestriction("status = 'Y'")
 @Entity
 public class Post extends BaseEntity {
@@ -23,10 +32,15 @@ public class Post extends BaseEntity {
     @Column(nullable = false, length=256)
     private String content;
 
+    @Builder.Default
     @Column(nullable = false)
     private Long likesCount = 0L;
 
-    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
-    @JoinColumn(name = "post_id")
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User writer;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
 }
