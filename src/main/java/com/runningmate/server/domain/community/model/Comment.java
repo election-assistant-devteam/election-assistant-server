@@ -39,7 +39,7 @@ public class Comment extends BaseEntity {
 
     @Builder.Default
     @Column(nullable = false)
-    private Long likes = 0L;
+    private Long likeCount = 0L;
 
     @Builder.Default
     @Column(nullable = false)
@@ -55,6 +55,7 @@ public class Comment extends BaseEntity {
 
     public void setPost(Post post){
         this.post = post;
+        this.post.increaseCommentCount();
         post.getComments().add(this);
     }
 }
