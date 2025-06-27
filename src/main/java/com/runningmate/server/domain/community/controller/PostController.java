@@ -1,5 +1,6 @@
 package com.runningmate.server.domain.community.controller;
 
+import com.runningmate.server.domain.community.dto.CreateCommentOnPostRequest;
 import com.runningmate.server.domain.community.dto.CreatePostRequest;
 import com.runningmate.server.domain.community.service.PostService;
 import com.runningmate.server.global.common.response.BaseResponse;
@@ -20,9 +21,16 @@ public class PostController {
     private final PostService postService;
     @PostMapping
     public BaseResponse<Object> createPost(@LoginUserId Long userId, @RequestPart List<MultipartFile> images, @RequestPart CreatePostRequest request){
-        log.info("[createPost]");
+        log.info("[createPost] userId = {}", userId);
         long postId = postService.create(userId, images, request);
         return new BaseResponse(Map.of("postId", postId));
+    }
+
+    @PostMapping("{postId}/comments")
+    public BaseResponse<Object> createCommentOnPost(@LoginUserId Long userId, @PathVariable Long postId, @RequestBody CreateCommentOnPostRequest request){
+        log.info("[createCommentOnPost] userId={}", userId);
+        long commmentId = postService.createComment(userId, postId, request);
+        return new BaseResponse<>(Map.of("commentId", commmentId));
     }
 }
 
