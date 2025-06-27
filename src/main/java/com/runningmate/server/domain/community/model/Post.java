@@ -34,7 +34,11 @@ public class Post extends BaseEntity {
 
     @Builder.Default
     @Column(nullable = false)
-    private Long likesCount = 0L;
+    private Long likeCount = 0L;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Long commentCount = 0L;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -48,4 +52,7 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
+    public void increaseCommentCount() {
+        this.commentCount++;
+    }
 }
