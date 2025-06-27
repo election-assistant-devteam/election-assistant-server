@@ -31,8 +31,6 @@ public class UserService {
     }
 
     public void updateUser(Long prevId, String password, String nickname) {
-        System.out.println("password = " + password);
-        System.out.println("nickname = " + nickname);
         User user = userRepository.findById(prevId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + prevId));
 
@@ -42,6 +40,19 @@ public class UserService {
 
         if (nickname != null) {
             userRepository.updateNickname(prevId, nickname);
+        }
+    }
+
+    public void updatePreference(Long prevId, String party, String politician) {
+        User user = userRepository.findById(prevId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + prevId));
+
+        if (party != null) {
+            userRepository.updateParty(prevId, party);
+        }
+
+        if (politician != null) {
+            userRepository.updatePolitician(prevId, politician);
         }
     }
 

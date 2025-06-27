@@ -28,4 +28,11 @@ public class UserController {
         userService.updateUser(prevId, req.getPassword(), req.getNickname());
         return new BaseResponse<>(null);
     }
+
+    @PostMapping("/edit/preference")
+    public BaseResponse<Void> updatePreference(@RequestParam("prevId") Long prevId, @RequestBody UpdateUserRequest req){
+        log.info(req.getPartyOfInterest());
+        userService.updatePreference(prevId, req.getPartyOfInterest(), req.getPoliticianOfInterest());
+        return new BaseResponse<>(null);
+    }
 }

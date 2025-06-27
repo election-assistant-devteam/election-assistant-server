@@ -10,4 +10,6 @@ import lombok.Setter;
 public class UpdateUserRequest {
     private String nickname;
     private String password;
+    private String partyOfInterest;
+    private String politicianOfInterest;
 }

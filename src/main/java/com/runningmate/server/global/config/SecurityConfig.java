@@ -56,7 +56,7 @@ public class SecurityConfig {
         // 엔드포인트별 인증인가 정책 설정
         http
                 .authorizeHttpRequests(authorizeHttpRequestCustomizer -> authorizeHttpRequestCustomizer
-                        .requestMatchers("/auth/login", "/users/create", "/users/update", "/calendar/schedules/**", "/elections/*/candidates", "/politicians/*/detail", "/news", "/", "/politicians", "/parties").permitAll()
+                        .requestMatchers("/edit/preference","/auth/login", "/users/create", "/users/update", "/calendar/schedules/**", "/elections/*/candidates", "/politicians/*/detail", "/news", "/", "/politicians", "/parties").permitAll()
                         .requestMatchers(SWAGGER_ENDPOINTS).permitAll()
                         .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .anyRequest().authenticated()

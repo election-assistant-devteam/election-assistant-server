@@ -38,4 +38,28 @@ public interface UserRepository extends JpaRepository<User, Long> {
             @Param("id")       Long id,
             @Param("nickname") String nickname
     );
+
+    @Modifying
+    @Transactional
+    @Query("""
+        UPDATE User u 
+        SET u.partyOfInterest = :party
+        WHERE u.id = :id
+        """)
+    int updateParty(
+            @Param("id")       Long id,
+            @Param("party") String party
+    );
+
+    @Modifying
+    @Transactional
+    @Query("""
+        UPDATE User u 
+        SET u.politicianOfInterest = :politician
+        WHERE u.id = :id
+        """)
+    int updatePolitician(
+            @Param("id")       Long id,
+            @Param("politician") String politician
+    );
 }
