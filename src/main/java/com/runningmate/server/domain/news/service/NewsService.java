@@ -37,11 +37,13 @@ public class NewsService {
         if (os.contains("linux")) {
             String major = detectChromiumMajor();    // "126"
             WebDriverManager.chromedriver()
+                    .clearDriverCache()
                     .clearResolutionCache()
                     .browserVersion(major)
                     .setup();
         } else {
             WebDriverManager.chromedriver()
+                    .clearDriverCache()
                     .clearResolutionCache()
                     .setup();
         }
