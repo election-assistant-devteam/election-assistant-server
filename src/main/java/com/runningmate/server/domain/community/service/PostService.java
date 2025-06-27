@@ -1,13 +1,16 @@
 package com.runningmate.server.domain.community.service;
 
+import com.runningmate.server.domain.community.dto.CreateCommentOnPostRequest;
 import com.runningmate.server.domain.community.dto.CreatePostRequest;
 import com.runningmate.server.domain.community.infrastructure.S3Uploader;
+import com.runningmate.server.domain.community.model.Comment;
 import com.runningmate.server.domain.community.model.Image;
 import com.runningmate.server.domain.community.model.Post;
+import com.runningmate.server.domain.community.repository.CommentRepository;
 import com.runningmate.server.domain.community.repository.PostRepository;
 import com.runningmate.server.domain.user.model.User;
 import com.runningmate.server.domain.user.repository.UserRepository;
-import com.runningmate.server.global.common.exception.UserNotFoundException;
+import com.runningmate.server.global.common.exception.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.runningmate.server.global.common.response.status.BaseExceptionResponseStatus.USER_NOT_FOUND;
+import static com.runningmate.server.global.common.response.status.BaseExceptionResponseStatus.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,11 +30,12 @@ import static com.runningmate.server.global.common.response.status.BaseException
 public class PostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
     private final S3Uploader s3Uploader;
     public long create(long userId, List<MultipartFile> files, CreatePostRequest request) {
         log.info("[create]");
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
 
         // 이미지 리스트를 s3에 저장
         List<Image> images = uploadImagesToS3(files);
@@ -66,5 +70,35 @@ public class PostService {
                     .build());
         }
         return images;
+    }
+
+    public long createComment(Long userId, Long postId, CreateCommentOnPostRequest request) {
+        log.info("[createComment]");
+
+        // 유저를 찾는다
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
+        // 게시물을 찾는다
+        Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
+
+        // 부모 댓글을 찾는다
+        Comment parent = null;
+        if (request.parentId() != null) {
+            parent = commentRepository.findById(request.parentId()).orElseThrow(() -> new EntityNotFoundException(COMMENT_NOT_FOUND));
+        }
+
+        // 댓글을 추가한다
+        Comment comment = Comment.builder()
+                .content(request.content())
+                .isAnonymous(request.isAnonymous())
+                .parent(parent)
+                .writer(user)
+                .build();
+
+        comment.setPost(post);
+
+        Comment saved = commentRepository.save(comment);
+
+        return saved.getId();
     }
 }
