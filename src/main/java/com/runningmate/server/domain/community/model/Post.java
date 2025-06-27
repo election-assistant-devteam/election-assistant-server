@@ -43,4 +43,9 @@ public class Post extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
 }
