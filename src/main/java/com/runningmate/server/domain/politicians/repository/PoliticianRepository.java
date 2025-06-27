@@ -20,4 +20,10 @@ public interface PoliticianRepository extends JpaRepository<Politician, Long> {
             @Param("birthdays") List<LocalDate> birthdays,
             @Param("names") List<String> names
     );
+
+    @Query("SELECT DISTINCT p.name FROM Politician p")
+    List<String> findAllNames();
+
+    @Query("SELECT DISTINCT p.party FROM Politician p")
+    List<String> findAllParties();
 }

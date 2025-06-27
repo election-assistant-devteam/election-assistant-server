@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import static com.runningmate.server.global.common.response.status.BaseExceptionResponseStatus.FIND_POLITICIAN_FAILED;
 
 @Slf4j
@@ -19,6 +21,14 @@ public class PoliticianService {
 
     private final PoliticianRepository politicianRepository;
     private final PoliticianDetailRepository politicianDetailRepository;
+
+    public List<String> getPoliticianNames(){
+        return politicianRepository.findAllNames();
+    }
+
+    public List<String> getPartyNames(){
+        return politicianRepository.findAllParties();
+    }
 
     public PoliticianResponse getPoliticianDetail(Long politicianId) {
         Politician politician = politicianRepository.findById(politicianId)

@@ -22,7 +22,7 @@ public class NewsScheduler {
         refresh();
     }
 
-    @Scheduled(fixedRate = 1 * 60 * 1000)
+    @Scheduled(fixedRate = 3 * 60 * 1000)
     public void refresh() {
         try {
             cache.setCache(newsService.scrapeNews());
