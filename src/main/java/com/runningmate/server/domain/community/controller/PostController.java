@@ -2,6 +2,7 @@ package com.runningmate.server.domain.community.controller;
 
 import com.runningmate.server.domain.community.dto.CreateCommentOnPostRequest;
 import com.runningmate.server.domain.community.dto.CreatePostRequest;
+import com.runningmate.server.domain.community.dto.GetPostsResponse;
 import com.runningmate.server.domain.community.service.PostService;
 import com.runningmate.server.global.common.response.BaseResponse;
 import com.runningmate.server.global.jwt.LoginUserId;
@@ -31,6 +32,12 @@ public class PostController {
         log.info("[createCommentOnPost] userId={}", userId);
         long commmentId = postService.createComment(userId, postId, request);
         return new BaseResponse<>(Map.of("commentId", commmentId));
+    }
+
+    @GetMapping
+    public BaseResponse<GetPostsResponse> GetPosts(@LoginUserId Long userId, @RequestParam(required = false) Long lastId, @RequestParam(required = false) String keyword){
+        log.info("[findPosts] userId = {} lastId = {} keyword = {}", userId, lastId, keyword);
+        return new BaseResponse<>(postService.findPageByCursor(lastId, keyword, 10));
     }
 }
 
