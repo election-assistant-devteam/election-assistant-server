@@ -1,0 +1,28 @@
+package com.runningmate.server.domain.community.controller;
+
+import com.runningmate.server.domain.community.dto.CreatePostRequest;
+import com.runningmate.server.domain.community.service.PostService;
+import com.runningmate.server.global.common.response.BaseResponse;
+import com.runningmate.server.global.jwt.LoginUserId;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.Map;
+
+@Slf4j
+@RequiredArgsConstructor
+@RequestMapping("posts")
+@RestController
+public class PostController {
+    private final PostService postService;
+    @PostMapping
+    public BaseResponse<Object> createPost(@LoginUserId Long userId, @RequestPart List<MultipartFile> images, @RequestPart CreatePostRequest request){
+        log.info("[createPost]");
+        long postId = postService.create(userId, images, request);
+        return new BaseResponse(Map.of("postId", postId));
+    }
+}
+
