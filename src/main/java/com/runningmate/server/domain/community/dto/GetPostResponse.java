@@ -1,9 +1,13 @@
 package com.runningmate.server.domain.community.dto;
 
+import com.runningmate.server.domain.community.model.Image;
 import com.runningmate.server.domain.community.model.Post;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Builder
 public record GetPostResponse (
@@ -14,7 +18,8 @@ public record GetPostResponse (
     String content,
     Long likeCount,
     Long commentCount,
-    Boolean hasLiked
+    Boolean hasLiked,
+    List<String> images
 ){
     public static GetPostResponse entityToDto(Post post){
         return GetPostResponse.builder()
@@ -26,6 +31,10 @@ public record GetPostResponse (
                 .likeCount(post.getLikeCount())
                 .commentCount(post.getCommentCount())
                 .hasLiked(false)   // 아직 구현하기 전임
+                .images(post.getImages().stream()
+                        .sorted(Comparator.comparing(Image::getImageOrder))
+                        .map(Image::getImageUrl)
+                        .collect(Collectors.toList()))
                 .build();
     }
 }

@@ -4,10 +4,12 @@ import com.runningmate.server.global.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
