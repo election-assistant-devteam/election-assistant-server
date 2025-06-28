@@ -30,7 +30,7 @@ public class PostController {
     @PostMapping("{postId}/comments")
     public BaseResponse<Object> createCommentOnPost(@LoginUserId Long userId, @PathVariable Long postId, @RequestBody CreateCommentOnPostRequest request){
         log.info("[createCommentOnPost] userId={}", userId);
-        long commmentId = postService.createComment(userId, postId, request);
+        long commmentId = postCommentService.createComment(userId, postId, request);
         return new BaseResponse<>(Map.of("commentId", commmentId));
     }
 
