@@ -1,8 +1,13 @@
 package com.runningmate.server.domain.community.dto;
 
+import com.runningmate.server.domain.community.model.Comment;
+import lombok.Builder;
+
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Builder
 public record CommentResponse(
         Long commentId,
         LocalDateTime createdAt,
@@ -12,4 +17,17 @@ public record CommentResponse(
         Boolean hasLiked,
         List<ReplyResponse> replies
 ) {
+    public static CommentResponse entityToDto(Comment comment){
+        return CommentResponse.builder()
+                .commentId(comment.getId())
+                .createdAt(comment.getCreatedAt())
+                .writer(comment.getIsAnonymous() ? "익명" : comment.getWriter().getNickname())
+                .content(comment.getContent())
+                .likeCount(comment.getLikeCount())
+                .hasLiked(false)
+                .replies(comment.getChildren().stream()
+                        .map(ReplyResponse::entityToDto)
+                        .collect(Collectors.toList()))
+                .build();
+    }
 }
