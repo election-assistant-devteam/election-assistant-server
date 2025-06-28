@@ -39,7 +39,6 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
     // 정치인 관련 에러
     POLITICIAN_NOT_FOUND(40400, "존재하지 않는 정치인입니다.");
 
-
     private final boolean success = false;
     private final int code;
     private final String message;

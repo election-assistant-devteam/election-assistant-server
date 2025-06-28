@@ -32,7 +32,7 @@ public class PoliticianService {
 
     public PoliticianResponse getPoliticianDetail(Long politicianId) {
         Politician politician = politicianRepository.findById(politicianId)
-                .orElseThrow(() -> new PoliticianNotFoundException(FIND_POLITICIAN_FAILED));
+                .orElseThrow(() -> new PoliticianNotFoundException(POLITICIAN_NOT_FOUND));
         log.info(politician.toString());
 
         return PoliticianResponse.builder()
