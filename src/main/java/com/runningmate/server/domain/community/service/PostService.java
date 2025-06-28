@@ -1,9 +1,6 @@
 package com.runningmate.server.domain.community.service;
 
-import com.runningmate.server.domain.community.dto.CreateCommentOnPostRequest;
-import com.runningmate.server.domain.community.dto.CreatePostRequest;
-import com.runningmate.server.domain.community.dto.GetPostsResponse;
-import com.runningmate.server.domain.community.dto.PostSummaryDto;
+import com.runningmate.server.domain.community.dto.*;
 import com.runningmate.server.domain.community.infrastructure.S3Uploader;
 import com.runningmate.server.domain.community.model.Comment;
 import com.runningmate.server.domain.community.model.Image;
@@ -130,5 +127,13 @@ public class PostService {
         return new GetPostsResponse(summarys,
                 summarys.get(summarys.size() - 1).postId(),
                 hasNext);
+    }
+
+    public GetPostResponse findById(Long postId) {
+        log.info("[findById]");
+
+        Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
+
+        return GetPostResponse.entityToDto(post);
     }
 }
