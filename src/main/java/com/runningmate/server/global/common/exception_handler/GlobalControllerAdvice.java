@@ -1,6 +1,7 @@
 package com.runningmate.server.global.common.exception_handler;
 
 import com.runningmate.server.global.common.exception.BadRequestException;
+import com.runningmate.server.global.common.exception.PoliticianNotFoundException;
 import com.runningmate.server.global.common.response.BaseErrorResponse;
 import com.runningmate.server.global.common.response.BaseErrorResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -49,5 +50,12 @@ public class GlobalControllerAdvice {
         return new BaseErrorResponse(BAD_REQUEST, defaultMessage);
     }
 
+    // 요청한 정치인이 없을 경우
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(PoliticianNotFoundException.class)
+    public BaseErrorResponse handle_PoliticianNotFoundException(PoliticianNotFoundException e) {
+        log.error("[handle_PoliticianNotFoundException]", e);
+        return new BaseErrorResponse(e.getExceptionStatus());
+    }
 
 }

@@ -3,8 +3,6 @@ package com.runningmate.server.domain.politicians.service;
 import com.runningmate.server.domain.politicians.dto.internal.PoliticianResponse;
 import com.runningmate.server.domain.politicians.exception.PoliticianNotFoundException;
 import com.runningmate.server.domain.politicians.model.Politician;
-import com.runningmate.server.domain.politicians.model.PoliticianDetail;
-import com.runningmate.server.domain.politicians.repository.PoliticianDetailRepository;
 import com.runningmate.server.domain.politicians.repository.PoliticianRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +18,6 @@ import static com.runningmate.server.global.common.response.status.BaseException
 public class PoliticianService {
 
     private final PoliticianRepository politicianRepository;
-    private final PoliticianDetailRepository politicianDetailRepository;
 
     public List<String> getPoliticianNames(){
         return politicianRepository.findAllNames();
