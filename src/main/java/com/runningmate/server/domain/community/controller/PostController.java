@@ -1,9 +1,7 @@
 package com.runningmate.server.domain.community.controller;
 
-import com.runningmate.server.domain.community.dto.CreateCommentOnPostRequest;
-import com.runningmate.server.domain.community.dto.CreatePostRequest;
-import com.runningmate.server.domain.community.dto.GetPostResponse;
-import com.runningmate.server.domain.community.dto.GetPostsResponse;
+import com.runningmate.server.domain.community.dto.*;
+import com.runningmate.server.domain.community.service.PostCommentService;
 import com.runningmate.server.domain.community.service.PostService;
 import com.runningmate.server.global.common.response.BaseResponse;
 import com.runningmate.server.global.jwt.LoginUserId;
@@ -21,6 +19,7 @@ import java.util.Map;
 @RestController
 public class PostController {
     private final PostService postService;
+    private final PostCommentService postCommentService;
     @PostMapping
     public BaseResponse<Object> createPost(@LoginUserId Long userId, @RequestPart List<MultipartFile> images, @RequestPart CreatePostRequest request){
         log.info("[createPost] userId = {}", userId);
@@ -45,6 +44,12 @@ public class PostController {
     public BaseResponse<GetPostResponse> getPost(@PathVariable Long postId){
         log.info("[getPost] postId = {}",  postId);
         return new BaseResponse<>(postService.findById(postId));
+    }
+
+    @GetMapping("/{postId}/comments")
+    public BaseResponse<GetPostCommentsReponse> getPostComments(@PathVariable Long postId){
+        log.info("[getPostComments] postId = {}", postId);
+        return new BaseResponse<>(postCommentService.findByPostId(postId));
     }
 }
 
