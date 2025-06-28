@@ -58,4 +58,8 @@ public class Comment extends BaseEntity {
         this.post.increaseCommentCount();
         post.getComments().add(this);
     }
+
+    public boolean isParent(){
+        return this.parent == null;
+    }
 }
