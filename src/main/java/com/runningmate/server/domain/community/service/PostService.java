@@ -31,7 +31,6 @@ import static com.runningmate.server.global.common.response.status.BaseException
 public class PostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
-    private final CommentRepository commentRepository;
     private final S3Uploader s3Uploader;
     public long create(long userId, List<MultipartFile> files, CreatePostRequest request) {
         log.info("[create]");
@@ -71,36 +70,6 @@ public class PostService {
                     .build());
         }
         return images;
-    }
-
-    public long createComment(Long userId, Long postId, CreateCommentOnPostRequest request) {
-        log.info("[createComment]");
-
-        // 유저를 찾는다
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-
-        // 게시물을 찾는다
-        Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
-
-        // 부모 댓글을 찾는다
-        Comment parent = null;
-        if (request.parentId() != null) {
-            parent = commentRepository.findById(request.parentId()).orElseThrow(() -> new EntityNotFoundException(COMMENT_NOT_FOUND));
-        }
-
-        // 댓글을 추가한다
-        Comment comment = Comment.builder()
-                .content(request.content())
-                .isAnonymous(request.isAnonymous())
-                .parent(parent)
-                .writer(user)
-                .build();
-
-        comment.setPost(post);
-
-        Comment saved = commentRepository.save(comment);
-
-        return saved.getId();
     }
 
     public GetPostsResponse findPageByCursor(Long lastId, String keyword, int pageSize) {
