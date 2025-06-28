@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.runningmate.server.global.common.response.status.BaseExceptionResponseStatus.FIND_POLITICIAN_FAILED;
+import static com.runningmate.server.global.common.response.status.BaseExceptionResponseStatus.POLITICIAN_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -32,7 +32,7 @@ public class PoliticianService {
 
     public PoliticianResponse getPoliticianDetail(Long politicianId) {
         Politician politician = politicianRepository.findById(politicianId)
-                .orElseThrow(() -> new PoliticianNotFoundException(FIND_POLITICIAN_FAILED));
+                .orElseThrow(() -> new PoliticianNotFoundException(POLITICIAN_NOT_FOUND));
         log.info(politician.toString());
 
         return PoliticianResponse.builder()
