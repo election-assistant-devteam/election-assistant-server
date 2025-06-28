@@ -49,7 +49,17 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-security"
     testImplementation "org.springframework.security:spring-security-test"
 
+    // Selenium WebDriver
+    implementation 'org.seleniumhq.selenium:selenium-java:4.21.0'
+
+    // Selenium WenDriver Manager
+    implementation 'io.github.bonigarcia:webdrivermanager:5.5.3'
+
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+    // AWS
+    implementation platform('software.amazon.awssdk:bom:2.25.8')
+    implementation 'software.amazon.awssdk:s3'
 }
 
 tasks.named('test') {

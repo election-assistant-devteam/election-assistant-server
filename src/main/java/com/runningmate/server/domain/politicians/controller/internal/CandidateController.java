@@ -14,7 +14,7 @@ public class CandidateController {
     private final CandidateService candidateService;
 
     @GetMapping("/elections/{electionId}/candidates")
-    public BaseResponse<Object> getCandidates(@PathVariable Long electionId, @RequestParam Integer lastId){
+    public BaseResponse<Object> getCandidates(@PathVariable Long electionId, @RequestParam(required = false) Integer lastId){
         CandidatesResponse candidatesResponse = candidateService.fetchElectionInfo(electionId, lastId);
         return new BaseResponse<>(candidatesResponse);
     }

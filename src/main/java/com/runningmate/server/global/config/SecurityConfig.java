@@ -4,10 +4,12 @@ import com.runningmate.server.global.jwt.JwtAuthenticationFilter;
 import com.runningmate.server.global.jwt.JwtUtil;
 import com.runningmate.server.global.security.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
@@ -54,10 +56,16 @@ public class SecurityConfig {
         // 엔드포인트별 인증인가 정책 설정
         http
                 .authorizeHttpRequests(authorizeHttpRequestCustomizer -> authorizeHttpRequestCustomizer
-                        .requestMatchers("/auth/login", "/users", "/calendar/schedules").permitAll()
+                        .requestMatchers("/edit/preference","/auth/login", "/users/create", "/users/update", "/calendar/schedules/**", "/elections/*/candidates", "/politicians/*/detail", "/news", "/", "/politicians", "/parties").permitAll()
                         .requestMatchers(SWAGGER_ENDPOINTS).permitAll()
+                        .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .anyRequest().authenticated()
                 );
+        // H2 Console 사용 시 <iframe> 태그에 로드 가능하도록 설정
+        http.
+                headers(headers -> headers
+                .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
+        );
 
         // 토큰 검증 필터 추가
         http

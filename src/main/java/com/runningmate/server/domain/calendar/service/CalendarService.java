@@ -27,7 +27,12 @@ public class CalendarService {
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
     public GetSchedulesResponse findSchedules(Long userId, Integer year) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+        User user;
+        if (userId != null) {
+            user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+        } else {
+            user = null;
+        }
         List<SchedulesForDate> dates = new ArrayList<>();
         IntStream.range(1, 13)
                 .forEach(month -> {
