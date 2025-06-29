@@ -1,6 +1,7 @@
 package com.runningmate.server.global.common.exception_handler;
 
 import com.runningmate.server.global.common.exception.BadRequestException;
+import com.runningmate.server.global.common.exception.EntityNotFoundException;
 import com.runningmate.server.global.common.exception.PoliticianNotFoundException;
 import com.runningmate.server.global.common.response.BaseErrorResponse;
 import com.runningmate.server.global.common.response.BaseErrorResponse;
@@ -58,4 +59,11 @@ public class GlobalControllerAdvice {
         return new BaseErrorResponse(e.getExceptionStatus());
     }
 
+    // 엔티티가 없는 경우
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(EntityNotFoundException.class)
+    public BaseErrorResponse handle_EntityNotFoundException(EntityNotFoundException e) {
+        log.error("[handle_EntityNotFoundException]", e);
+        return new BaseErrorResponse(e.getExceptionStatus());
+    }
 }
