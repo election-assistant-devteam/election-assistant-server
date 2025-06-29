@@ -4,6 +4,7 @@ import com.runningmate.server.global.jwt.JwtAuthenticationFilter;
 import com.runningmate.server.global.jwt.JwtUtil;
 import com.runningmate.server.global.security.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +33,8 @@ public class SecurityConfig {
             "/swagger-ui/**", "/api-docs", "/swagger-ui-custom.html",
             "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html", "/swagger-ui/index.html"
     };
+    @Value("${spring.profiles.active:default}")
+    private String activeProfile;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -55,12 +58,21 @@ public class SecurityConfig {
 
         // 엔드포인트별 인증인가 정책 설정
         http
-                .authorizeHttpRequests(authorizeHttpRequestCustomizer -> authorizeHttpRequestCustomizer
-                        .requestMatchers("/edit/preference","/auth/login", "/users/create", "/users/update", "/calendar/schedules/**", "/elections/*/candidates", "/politicians/*/detail", "/news", "/", "/politicians", "/parties").permitAll()
-                        .requestMatchers(SWAGGER_ENDPOINTS).permitAll()
-                        .requestMatchers(PathRequest.toH2Console()).permitAll()
-                        .anyRequest().authenticated()
-                );
+                .authorizeHttpRequests(authorize -> {
+                    authorize
+                            .requestMatchers(
+                                    "/edit/preference", "/auth/login", "/users/create", "/users/update",
+                                    "/calendar/schedules/**", "/elections/*/candidates",
+                                    "/politicians/*/detail", "/news", "/", "/politicians", "/parties"
+                            ).permitAll()
+                            .requestMatchers(SWAGGER_ENDPOINTS).permitAll();
+
+                    if ("local".equals(activeProfile)) {
+                        authorize.requestMatchers("/h2-console/**").permitAll();
+                    }
+
+                    authorize.anyRequest().authenticated();
+                });
         // H2 Console 사용 시 <iframe> 태그에 로드 가능하도록 설정
         http.
                 headers(headers -> headers
