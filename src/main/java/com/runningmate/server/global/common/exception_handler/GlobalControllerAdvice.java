@@ -1,6 +1,7 @@
 package com.runningmate.server.global.common.exception_handler;
 
 import com.runningmate.server.global.common.exception.BadRequestException;
+import com.runningmate.server.global.common.exception.CustomException;
 import com.runningmate.server.global.common.exception.EntityNotFoundException;
 import com.runningmate.server.global.common.response.BaseErrorResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +56,14 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(EntityNotFoundException.class)
     public BaseErrorResponse handle_EntityNotFoundException(EntityNotFoundException e) {
         log.error("[handle_EntityNotFoundException]", e);
+        return new BaseErrorResponse(e.getExceptionStatus());
+    }
+
+    // 커스텀 예외의 경우
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(CustomException.class)
+    public BaseErrorResponse handle_CustomException(CustomException e) {
+        log.error("[handle_CustomException]", e);
         return new BaseErrorResponse(e.getExceptionStatus());
     }
 }
