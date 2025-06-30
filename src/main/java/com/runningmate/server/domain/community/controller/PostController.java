@@ -51,5 +51,12 @@ public class PostController {
         log.info("[getPostComments] postId = {}", postId);
         return new BaseResponse<>(postCommentService.findByPostId(postId));
     }
+
+    @PostMapping("/{postId}/likes")
+    public BaseResponse<Void> likePost(@LoginUserId Long userId, @PathVariable Long postId){
+        log.info("[addLikeOnPost] userId = {} postId = {}", userId, postId);
+        postService.likePost(userId, postId);
+        return new BaseResponse<>(null);
+    }
 }
 
