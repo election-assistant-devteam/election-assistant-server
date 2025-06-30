@@ -1,24 +1,28 @@
 package com.runningmate.server.domain.community.service;
 
-import com.runningmate.server.domain.community.dto.CreatePostRequest;
+import com.runningmate.server.domain.community.dto.*;
 import com.runningmate.server.domain.community.infrastructure.S3Uploader;
+import com.runningmate.server.domain.community.model.Comment;
 import com.runningmate.server.domain.community.model.Image;
 import com.runningmate.server.domain.community.model.Post;
+import com.runningmate.server.domain.community.repository.CommentRepository;
 import com.runningmate.server.domain.community.repository.PostRepository;
 import com.runningmate.server.domain.user.model.User;
 import com.runningmate.server.domain.user.repository.UserRepository;
-import com.runningmate.server.global.common.exception.UserNotFoundException;
+import com.runningmate.server.global.common.exception.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static com.runningmate.server.global.common.response.status.BaseExceptionResponseStatus.USER_NOT_FOUND;
+import static com.runningmate.server.global.common.response.status.BaseExceptionResponseStatus.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,7 +35,7 @@ public class PostService {
     public long create(long userId, List<MultipartFile> files, CreatePostRequest request) {
         log.info("[create]");
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
 
         // 이미지 리스트를 s3에 저장
         List<Image> images = uploadImagesToS3(files);
@@ -66,5 +70,39 @@ public class PostService {
                     .build());
         }
         return images;
+    }
+
+    public GetPostsResponse findPageByCursor(Long lastId, String keyword, int pageSize) {
+        log.info("[getPosts]");
+
+        // 페이지크기만큼 조회한다
+        List<Post> posts = postRepository.findWithKeywordAndCursor(keyword, lastId, PageRequest.of(0, pageSize + 1));
+
+
+        // 다음 페이지 존재여부를 확인한다.
+        boolean hasNext = posts.size() > pageSize ? true : false;
+
+        // 리턴한다
+        List<PostSummaryDto> summarys = posts.stream().map(entity -> PostSummaryDto.builder()
+                            .postId(entity.getId())
+                            .title(entity.getTitle())
+                            .content(entity.getContent())
+                            .likeCount(entity.getLikeCount())
+                            .commentCount(entity.getCommentCount())
+                            .build())
+                    .limit(pageSize)
+                    .collect(Collectors.toList());
+
+        return new GetPostsResponse(summarys,
+                summarys.get(summarys.size() - 1).postId(),
+                hasNext);
+    }
+
+    public GetPostResponse findById(Long postId) {
+        log.info("[findById]");
+
+        Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
+
+        return GetPostResponse.entityToDto(post);
     }
 }

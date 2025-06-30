@@ -37,7 +37,11 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
     FIND_ELECTION_FAILED(40400, "존재하지 않는 선거입니다."),
 
     // 정치인 관련 에러
-    POLITICIAN_NOT_FOUND(40400, "존재하지 않는 정치인입니다.");
+    POLITICIAN_NOT_FOUND(40400, "존재하지 않는 정치인입니다."),
+
+    // 게시글 관련 에러
+    POST_NOT_FOUND(40400, "존재하지 않는 게시글입니다"),
+    COMMENT_NOT_FOUND(40400, "존재하지 않는 댓글입니다");
 
     private final boolean success = false;
     private final int code;

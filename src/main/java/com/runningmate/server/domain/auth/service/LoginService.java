@@ -5,7 +5,6 @@ import com.runningmate.server.domain.auth.dto.LoginResponse;
 import com.runningmate.server.domain.auth.exception.LoginFailedException;
 import com.runningmate.server.domain.user.model.User;
 import com.runningmate.server.domain.user.repository.UserRepository;
-import com.runningmate.server.global.common.exception.UserNotFoundException;
 import com.runningmate.server.global.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

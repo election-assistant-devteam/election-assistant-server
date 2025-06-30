@@ -6,7 +6,7 @@ import com.runningmate.server.domain.calendar.model.Schedule;
 import com.runningmate.server.domain.calendar.repository.ScheduleRepository;
 import com.runningmate.server.domain.user.model.User;
 import com.runningmate.server.domain.user.repository.UserRepository;
-import com.runningmate.server.global.common.exception.UserNotFoundException;
+import com.runningmate.server.global.common.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class CalendarService {
     public GetSchedulesResponse findSchedules(Long userId, Integer year) {
         User user;
         if (userId != null) {
-            user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+            user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
         } else {
             user = null;
         }

@@ -14,7 +14,7 @@ import static com.runningmate.server.global.common.response.status.BaseException
 public class UserService {
     private final UserRepository userRepository;
 
-    public void createUser(String username, String password, String nickname, String email) {
+    public User createUser(String username, String password, String nickname, String email) {
         if(validateUsername(username)){
             throw new SameUserExistsException(SAME_USERNAME_EXISTS);
         }
@@ -27,7 +27,7 @@ public class UserService {
                 .nickname(nickname)
                 .email(email)
                 .build();
-        userRepository.save(newUser);
+        return userRepository.save(newUser);
     }
 
     public void updateUser(Long prevId, String password, String nickname) {

@@ -9,8 +9,8 @@ import com.runningmate.server.domain.watch.dto.WatchedPoliticianResponse;
 import com.runningmate.server.domain.watch.model.UserWatchList;
 import com.runningmate.server.domain.watch.model.UserWatchListId;
 import com.runningmate.server.domain.watch.repository.WatchListRepository;
+import com.runningmate.server.global.common.exception.EntityNotFoundException;
 import com.runningmate.server.global.common.exception.PoliticianNotFoundException;
-import com.runningmate.server.global.common.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +29,9 @@ public class WatchListService {
     public AddWatchListResponse followPolitician(Long userId, Long politicianId){
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+                .orElseThrow(() -> {
+                    return new EntityNotFoundException(USER_NOT_FOUND);
+                });
         Politician politician = politicianRepository.findById(politicianId)
                 .orElseThrow(() -> new PoliticianNotFoundException(POLITICIAN_NOT_FOUND));
 

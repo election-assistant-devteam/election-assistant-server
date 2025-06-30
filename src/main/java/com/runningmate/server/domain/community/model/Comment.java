@@ -17,19 +17,24 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE post SET status='N' where id = ?")
+@SQLDelete(sql = "UPDATE comment SET status='N' where id = ?")
 @SQLRestriction("status = 'Y'")
 @Entity
-public class Post extends BaseEntity {
+public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String title;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User writer;
+
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post;
 
     @Lob
-    @Column(nullable = false, length=256)
+    @Column(nullable = false, length = 256)
     private String content;
 
     @Builder.Default
@@ -38,21 +43,23 @@ public class Post extends BaseEntity {
 
     @Builder.Default
     @Column(nullable = false)
-    private Long commentCount = 0L;
+    private Boolean isAnonymous = true;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User writer;
+    @JoinColumn(name = "parent_id")
+    private Comment parent;
 
     @Builder.Default
-    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private List<Image> images = new ArrayList<>();
+    @OneToMany(mappedBy = "parent")
+    private List<Comment> children = new ArrayList<>();
 
-    @Builder.Default
-    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
+    public void setPost(Post post){
+        this.post = post;
+        this.post.increaseCommentCount();
+        post.getComments().add(this);
+    }
 
-    public void increaseCommentCount() {
-        this.commentCount++;
+    public boolean isParent(){
+        return this.parent == null;
     }
 }
