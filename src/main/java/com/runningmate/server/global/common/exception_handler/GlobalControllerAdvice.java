@@ -2,8 +2,6 @@ package com.runningmate.server.global.common.exception_handler;
 
 import com.runningmate.server.global.common.exception.BadRequestException;
 import com.runningmate.server.global.common.exception.EntityNotFoundException;
-import com.runningmate.server.global.common.exception.PoliticianNotFoundException;
-import com.runningmate.server.global.common.response.BaseErrorResponse;
 import com.runningmate.server.global.common.response.BaseErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.TypeMismatchException;
@@ -43,20 +41,13 @@ public class GlobalControllerAdvice {
         return new BaseErrorResponse(INTERNAL_SERVER_ERROR);
     }
 
+    // 요청에 필요한 인자가 없는 경우
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public BaseErrorResponse handle_MethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error("[handle_MethodArgumentNotValidException]", e);
         String defaultMessage = e.getBindingResult().getFieldError().getDefaultMessage();
         return new BaseErrorResponse(BAD_REQUEST, defaultMessage);
-    }
-
-    // 요청한 정치인이 없을 경우
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(PoliticianNotFoundException.class)
-    public BaseErrorResponse handle_PoliticianNotFoundException(PoliticianNotFoundException e) {
-        log.error("[handle_PoliticianNotFoundException]", e);
-        return new BaseErrorResponse(e.getExceptionStatus());
     }
 
     // 엔티티가 없는 경우
