@@ -1,6 +1,7 @@
 package com.runningmate.server.domain.community.model;
 
 import com.runningmate.server.domain.user.model.User;
+import com.runningmate.server.global.common.exception.BadRequestException;
 import com.runningmate.server.global.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,8 @@ import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.runningmate.server.global.common.response.status.BaseExceptionResponseStatus.WRITER_NOT_ALLOWED_TO_ADD_LIKE;
 
 @Getter
 @Builder
@@ -54,5 +57,17 @@ public class Post extends BaseEntity {
 
     public void increaseCommentCount() {
         this.commentCount++;
+    }
+
+    public PostLike addLike(User user) {
+        if(user == writer){
+            throw new BadRequestException(WRITER_NOT_ALLOWED_TO_ADD_LIKE);
+        }
+
+        this.likeCount++;
+        return PostLike.builder()
+                .post(this)
+                .user(user)
+                .build();
     }
 }
