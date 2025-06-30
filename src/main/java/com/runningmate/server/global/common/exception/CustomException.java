@@ -1,16 +1,15 @@
-package com.runningmate.server.domain.politicians.exception;
+package com.runningmate.server.global.common.exception;
 
 import com.runningmate.server.global.common.response.status.ResponseStatus;
 import lombok.Getter;
 
 @Getter
-public class ElectionNotFoundException extends RuntimeException{
+public class CustomException extends RuntimeException {
 
     private final ResponseStatus exceptionStatus;
 
-    public ElectionNotFoundException(ResponseStatus exceptionStatus){
+    public CustomException(ResponseStatus exceptionStatus) {
         super(exceptionStatus.getMessage());
         this.exceptionStatus = exceptionStatus;
     }
-
 }

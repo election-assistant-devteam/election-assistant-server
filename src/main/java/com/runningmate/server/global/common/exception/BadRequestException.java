@@ -4,12 +4,8 @@ import com.runningmate.server.global.common.response.status.ResponseStatus;
 import lombok.Getter;
 
 @Getter
-public class BadRequestException extends RuntimeException {
-
-    private final ResponseStatus exceptionStatus;
-
+public class BadRequestException extends CustomException {
     public BadRequestException(ResponseStatus exceptionStatus) {
-        super(exceptionStatus.getMessage());
-        this.exceptionStatus = exceptionStatus;
+        super(exceptionStatus);
     }
 }

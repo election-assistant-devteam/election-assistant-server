@@ -1,9 +1,9 @@
 package com.runningmate.server.domain.politicians.service;
 
 import com.runningmate.server.domain.politicians.dto.internal.PoliticianResponse;
-import com.runningmate.server.domain.politicians.exception.PoliticianNotFoundException;
 import com.runningmate.server.domain.politicians.model.Politician;
 import com.runningmate.server.domain.politicians.repository.PoliticianRepository;
+import com.runningmate.server.global.common.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class PoliticianService {
 
     public PoliticianResponse getPoliticianDetail(Long politicianId) {
         Politician politician = politicianRepository.findById(politicianId)
-                .orElseThrow(() -> new PoliticianNotFoundException(POLITICIAN_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(POLITICIAN_NOT_FOUND));
         log.info(politician.toString());
 
         return PoliticianResponse.builder()
