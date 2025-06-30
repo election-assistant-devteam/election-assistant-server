@@ -21,7 +21,7 @@ public record GetPostResponse (
     Boolean hasLiked,
     List<String> images
 ){
-    public static GetPostResponse entityToDto(Post post){
+    public static GetPostResponse entityToDto(Post post, boolean hasLiked){
         return GetPostResponse.builder()
                 .postId(post.getId())
                 .createdAt(post.getCreatedAt())
@@ -30,7 +30,7 @@ public record GetPostResponse (
                 .content(post.getContent())
                 .likeCount(post.getLikeCount())
                 .commentCount(post.getCommentCount())
-                .hasLiked(false)   // 아직 구현하기 전임
+                .hasLiked(hasLiked)
                 .images(post.getImages().stream()
                         .sorted(Comparator.comparing(Image::getImageOrder))
                         .map(Image::getImageUrl)
