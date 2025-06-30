@@ -5,6 +5,7 @@ import com.runningmate.server.domain.community.model.Image;
 import com.runningmate.server.domain.community.model.Post;
 import com.runningmate.server.domain.community.repository.PostRepository;
 import com.runningmate.server.domain.community.service.PostCommentService;
+import com.runningmate.server.domain.community.service.PostService;
 import com.runningmate.server.domain.news.schedule.NewsScheduler;
 import com.runningmate.server.domain.politicians.init.PoliticianInitializer;
 import com.runningmate.server.domain.user.model.User;
@@ -47,6 +48,9 @@ class PostControllerTest {
 
     @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    private PostService postService;
 
     @Autowired
     private PostCommentService postCommentService;
@@ -140,6 +144,46 @@ class PostControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.comments.length()").value(2))
                 .andExpect(jsonPath("$.data.comments[0].replies.length()").value(2));
+    }
+
+    @Test
+    void givenAddLikeToPost_whenGetPost_ThenHasLikedIsTrue() throws Exception {
+        // given
+        User postWriter = userService.createUser("user1", "pass", "게시글작성자", "asdf@asdf");
+
+        User likeAdder = userService.createUser("user2", "pass", "공감표시자", "asdf2@asdf");
+
+        Post post = createPostWithImages(postWriter, 2);
+
+        postService.likePost(likeAdder.getId(), post.getId());
+
+        // when
+        // then
+        String token = jwtUtil.generateAccessToken(likeAdder.getId(), likeAdder.getUsername());
+
+        mockMvc.perform(get("/posts/" + post.getId())
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.hasLiked").value(true));
+    }
+
+    @Test
+    void givenNotAddLikeToPost_whenGetPost_ThenHasLikedIsFalse() throws Exception {
+        // given
+        User postWriter = userService.createUser("user1", "pass", "게시글작성자", "asdf@asdf");
+
+        User anotherUser = userService.createUser("user2", "pass", "공감표시자", "asdf2@asdf");
+
+        Post post = createPostWithImages(postWriter, 2);
+
+        // when
+        // then
+        String token = jwtUtil.generateAccessToken(anotherUser.getId(), anotherUser.getUsername());
+
+        mockMvc.perform(get("/posts/" + post.getId())
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.hasLiked").value(false));
     }
 
     private Post createPostWithImages(User user, int imageCount) {
