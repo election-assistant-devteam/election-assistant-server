@@ -10,7 +10,6 @@ import com.runningmate.server.domain.watch.model.UserWatchList;
 import com.runningmate.server.domain.watch.model.UserWatchListId;
 import com.runningmate.server.domain.watch.repository.WatchListRepository;
 import com.runningmate.server.global.common.exception.EntityNotFoundException;
-import com.runningmate.server.global.common.exception.PoliticianNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,11 +28,11 @@ public class WatchListService {
     public AddWatchListResponse followPolitician(Long userId, Long politicianId){
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> {
-                    return new EntityNotFoundException(USER_NOT_FOUND);
-                });
+                .orElseThrow(() ->
+                    new EntityNotFoundException(USER_NOT_FOUND)
+                );
         Politician politician = politicianRepository.findById(politicianId)
-                .orElseThrow(() -> new PoliticianNotFoundException(POLITICIAN_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(POLITICIAN_NOT_FOUND));
 
         UserWatchListId id = new UserWatchListId(userId, politicianId);
 
