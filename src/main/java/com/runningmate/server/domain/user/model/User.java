@@ -1,5 +1,6 @@
 package com.runningmate.server.domain.user.model;
 
+import com.runningmate.server.domain.community.model.PostLike;
 import com.runningmate.server.global.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -33,6 +37,9 @@ public class User extends BaseEntity {
     private String partyOfInterest;
     @Column(length = 100)
     private String politicianOfInterest;
+    @Builder.Default
+    @OneToMany(mappedBy = "user")
+    private List<PostLike> likedPosts = new ArrayList<>();
 
     public boolean hasSamePassword(String password) {
         return this.password.equals(password);
