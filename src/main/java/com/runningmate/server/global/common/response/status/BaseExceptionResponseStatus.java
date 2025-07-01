@@ -43,7 +43,8 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
     POST_NOT_FOUND(40400, "존재하지 않는 게시글입니다"),
     COMMENT_NOT_FOUND(40400, "존재하지 않는 댓글입니다"),
     WRITER_NOT_ALLOWED_TO_ADD_LIKE(40000, "작성자는 자신의 글에 공감을 추가할 수 없습니다"),
-    ALREADY_LIKED_POST(40000, "이미 공감을 누른 게시글입니다.");
+    ALREADY_LIKED_POST(40000, "이미 공감을 누른 게시글입니다."),
+    ALREADY_LIKED_COMMENT(40000, "이미 공감을 누른 댓글입니다.");;
 
 
     private final boolean success = false;
