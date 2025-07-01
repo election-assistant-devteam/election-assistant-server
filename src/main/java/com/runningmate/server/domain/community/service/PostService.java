@@ -115,7 +115,7 @@ public class PostService {
         return GetPostResponse.entityToDto(post, hasLiked);
     }
 
-    public void likePost(Long userId, Long postId) {
+    public LikePostResponse likePost(Long userId, Long postId) {
         log.info("[likePost]");
 
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
@@ -129,5 +129,7 @@ public class PostService {
         PostLike postLike = post.addLike(user);
 
         postLikeRepository.save(postLike);
+
+        return new LikePostResponse(post.getLikeCount());
     }
 }

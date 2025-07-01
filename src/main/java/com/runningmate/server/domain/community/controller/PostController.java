@@ -53,10 +53,9 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/likes")
-    public BaseResponse<Void> likePost(@LoginUserId Long userId, @PathVariable Long postId){
+    public BaseResponse<LikePostResponse> likePost(@LoginUserId Long userId, @PathVariable Long postId){
         log.info("[likePost] userId = {} postId = {}", userId, postId);
-        postService.likePost(userId, postId);
-        return new BaseResponse<>(null);
+        return new BaseResponse<>(postService.likePost(userId, postId));
     }
 }
 
