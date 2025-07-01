@@ -47,9 +47,9 @@ public class PostController {
     }
 
     @GetMapping("/{postId}/comments")
-    public BaseResponse<GetPostCommentsReponse> getPostComments(@PathVariable Long postId){
-        log.info("[getPostComments] postId = {}", postId);
-        return new BaseResponse<>(postCommentService.findByPostId(postId));
+    public BaseResponse<GetPostCommentsReponse> getPostComments(@LoginUserId Long userId, @PathVariable Long postId){
+        log.info("[getPostComments] userId = {}, postId = {}", userId, postId);
+        return new BaseResponse<>(postCommentService.findComments(userId, postId));
     }
 
     @PostMapping("/{postId}/likes")
