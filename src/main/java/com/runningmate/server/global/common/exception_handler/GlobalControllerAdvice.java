@@ -20,9 +20,9 @@ import static com.runningmate.server.global.common.response.status.BaseException
 public class GlobalControllerAdvice {
     // 잘못된 요청일 경우
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({BadRequestException.class, TypeMismatchException.class})
-    public BaseErrorResponse handle_BadRequest(Exception e){
-        log.error("[handle_BadRequest]", e);
+    @ExceptionHandler(TypeMismatchException.class)
+    public BaseErrorResponse handle_TypeMismatchException(TypeMismatchException e){
+        log.error("[handle_TypeMismatchException]", e);
         return new BaseErrorResponse(BAD_REQUEST);
     }
 
@@ -64,6 +64,14 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(CustomException.class)
     public BaseErrorResponse handle_CustomException(CustomException e) {
         log.error("[handle_CustomException]", e);
+        return new BaseErrorResponse(e.getExceptionStatus());
+    }
+
+    // 허용되지 않은 요청 파라미터인 경우
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BadRequestException.class)
+    public BaseErrorResponse handle_BadRequestException(BadRequestException e){
+        log.error("[handle_BadRequestException]", e);
         return new BaseErrorResponse(e.getExceptionStatus());
     }
 }
