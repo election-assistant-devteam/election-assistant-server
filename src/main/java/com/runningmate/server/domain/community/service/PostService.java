@@ -103,11 +103,14 @@ public class PostService {
     public GetPostResponse findPost(Long userId, Long postId) {
         log.info("[findById]");
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-
         Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
 
-        boolean hasLiked = postLikeRepository.existsByUserAndPost(user, post);
+        boolean hasLiked = false;
+
+        if(userId != null){
+            User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+            hasLiked = postLikeRepository.existsByUserAndPost(user, post);
+        }
 
         return GetPostResponse.entityToDto(post, hasLiked);
     }
