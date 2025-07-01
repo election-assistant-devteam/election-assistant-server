@@ -44,9 +44,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             //스프링 시큐리티 인증 토큰 생성하고 세션에 저장
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
-
         }
+
+        // 비회원 인증을 위해서 통과시키기
         filterChain.doFilter(request, response);
     }
 
