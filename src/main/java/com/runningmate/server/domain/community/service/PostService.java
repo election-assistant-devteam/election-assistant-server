@@ -1,11 +1,12 @@
 package com.runningmate.server.domain.community.service;
 
 import com.runningmate.server.domain.community.dto.*;
+import com.runningmate.server.domain.community.exception.AlreadyLikedException;
 import com.runningmate.server.domain.community.infrastructure.S3Uploader;
-import com.runningmate.server.domain.community.model.Comment;
 import com.runningmate.server.domain.community.model.Image;
 import com.runningmate.server.domain.community.model.Post;
-import com.runningmate.server.domain.community.repository.CommentRepository;
+import com.runningmate.server.domain.community.model.PostLike;
+import com.runningmate.server.domain.community.repository.PostLikeRepository;
 import com.runningmate.server.domain.community.repository.PostRepository;
 import com.runningmate.server.domain.user.model.User;
 import com.runningmate.server.domain.user.repository.UserRepository;
@@ -32,6 +33,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final S3Uploader s3Uploader;
+    private final PostLikeRepository postLikeRepository;
     public long create(long userId, List<MultipartFile> files, CreatePostRequest request) {
         log.info("[create]");
 
@@ -98,11 +100,34 @@ public class PostService {
                 hasNext);
     }
 
-    public GetPostResponse findById(Long postId) {
+    public GetPostResponse findPost(Long userId, Long postId) {
         log.info("[findById]");
 
         Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
 
-        return GetPostResponse.entityToDto(post);
+        boolean hasLiked = false;
+
+        if(userId != null){
+            User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+            hasLiked = postLikeRepository.existsByUserAndPost(user, post);
+        }
+
+        return GetPostResponse.entityToDto(post, hasLiked);
+    }
+
+    public void likePost(Long userId, Long postId) {
+        log.info("[likePost]");
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
+        Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
+
+        if(postLikeRepository.existsByUserAndPost(user, post)){
+            throw new AlreadyLikedException(ALREADY_LIKED_POST);
+        }
+
+        PostLike postLike = post.addLike(user);
+
+        postLikeRepository.save(postLike);
     }
 }

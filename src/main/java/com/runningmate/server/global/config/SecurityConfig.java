@@ -5,19 +5,18 @@ import com.runningmate.server.global.jwt.JwtUtil;
 import com.runningmate.server.global.security.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.http.HttpMethod;
 
 import java.util.List;
 
@@ -25,8 +24,6 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final JwtUtil jwtUtil;
-    private final UserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final String[] SWAGGER_ENDPOINTS = {
@@ -70,6 +67,10 @@ public class SecurityConfig {
                     if ("local".equals(activeProfile)) {
                         authorize.requestMatchers("/h2-console/**").permitAll();
                     }
+
+                    // 비회원도 사용할 수 있도록 GET 요청에 대해서 허용
+                    authorize.requestMatchers(HttpMethod.GET, "/posts").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/posts/*").permitAll();
 
                     authorize.anyRequest().authenticated();
                 });

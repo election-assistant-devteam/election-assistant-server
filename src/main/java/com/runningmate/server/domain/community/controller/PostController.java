@@ -41,15 +41,22 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public BaseResponse<GetPostResponse> getPost(@PathVariable Long postId){
+    public BaseResponse<GetPostResponse> getPost(@LoginUserId Long userId, @PathVariable Long postId){
         log.info("[getPost] postId = {}",  postId);
-        return new BaseResponse<>(postService.findById(postId));
+        return new BaseResponse<>(postService.findPost(userId, postId));
     }
 
     @GetMapping("/{postId}/comments")
     public BaseResponse<GetPostCommentsReponse> getPostComments(@PathVariable Long postId){
         log.info("[getPostComments] postId = {}", postId);
         return new BaseResponse<>(postCommentService.findByPostId(postId));
+    }
+
+    @PostMapping("/{postId}/likes")
+    public BaseResponse<Void> likePost(@LoginUserId Long userId, @PathVariable Long postId){
+        log.info("[likePost] userId = {} postId = {}", userId, postId);
+        postService.likePost(userId, postId);
+        return new BaseResponse<>(null);
     }
 }
 
