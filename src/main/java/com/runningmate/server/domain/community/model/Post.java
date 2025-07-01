@@ -14,7 +14,7 @@ import org.hibernate.annotations.SQLRestriction;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.runningmate.server.global.common.response.status.BaseExceptionResponseStatus.WRITER_NOT_ALLOWED_TO_ADD_LIKE;
+import static com.runningmate.server.global.common.response.status.BaseExceptionResponseStatus.LIKE_NOT_ALLOWED_TO_WRITER;
 
 @Getter
 @Builder
@@ -61,7 +61,7 @@ public class Post extends BaseEntity {
 
     public PostLike addLike(User user) {
         if(user == writer){
-            throw new BadRequestException(WRITER_NOT_ALLOWED_TO_ADD_LIKE);
+            throw new BadRequestException(LIKE_NOT_ALLOWED_TO_WRITER);
         }
 
         this.likeCount++;
