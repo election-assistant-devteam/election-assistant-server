@@ -9,6 +9,7 @@ import com.runningmate.server.domain.community.repository.CommentRepository;
 import com.runningmate.server.domain.user.model.User;
 import com.runningmate.server.domain.user.repository.UserRepository;
 import com.runningmate.server.global.common.exception.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import static com.runningmate.server.global.common.response.status.BaseException
 
 @Slf4j
 @AllArgsConstructor
+@Transactional
 @Service
 public class CommentService {
     private final UserRepository userRepository;
