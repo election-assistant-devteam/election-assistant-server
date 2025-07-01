@@ -17,17 +17,15 @@ public record CommentResponse(
         Boolean hasLiked,
         List<ReplyResponse> replies
 ) {
-    public static CommentResponse entityToDto(Comment comment){
+    public static CommentResponse entityToDto(Comment comment, boolean hasLiked, List<ReplyResponse> replies){
         return CommentResponse.builder()
                 .commentId(comment.getId())
                 .createdAt(comment.getCreatedAt())
                 .writer(comment.getIsAnonymous() ? "익명" : comment.getWriter().getNickname())
                 .content(comment.getContent())
                 .likeCount(comment.getLikeCount())
-                .hasLiked(false)
-                .replies(comment.getChildren().stream()
-                        .map(ReplyResponse::entityToDto)
-                        .collect(Collectors.toList()))
+                .hasLiked(hasLiked)
+                .replies(replies)
                 .build();
     }
 }
