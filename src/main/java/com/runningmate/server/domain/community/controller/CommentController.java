@@ -19,7 +19,7 @@ public class CommentController {
     private final CommentService commentService;
     @PostMapping("/{commentId}/likes")
     public BaseResponse<LikeCommentResponse> likeComment(@LoginUserId Long userId, @PathVariable Long commentId){
-        log.info("[likeComment] userId = {}, commentId = {}");
+        log.info("[likeComment] userId = {}, commentId = {}", userId, commentId);
         return new BaseResponse<>(commentService.likeComment(userId, commentId));
     }
 }
