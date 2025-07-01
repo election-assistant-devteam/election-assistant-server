@@ -31,7 +31,7 @@ public class CommentService {
 
         // 이미 공감한 댓글은 다시 공감할 수 없음
         if(commentLikeRepository.existsByUserAndComment(user, comment)){
-            throw new AlreadyLikedException(ALREADY_LIKED_POST);
+            throw new AlreadyLikedException(ALREADY_LIKED_COMMENT);
         }
 
         CommentLike commentLike = comment.addLike(user);
