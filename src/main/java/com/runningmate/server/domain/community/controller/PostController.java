@@ -57,5 +57,11 @@ public class PostController {
         log.info("[likePost] userId = {} postId = {}", userId, postId);
         return new BaseResponse<>(postService.likePost(userId, postId));
     }
+
+    @GetMapping("/popular-posts")
+    public BaseResponse<GetPopularPostResponse> getPopularPosts(){
+        log.info("[getPopularPosts]");
+        return new BaseResponse<>(postService.getPopularPosts());
+    }
 }
 
