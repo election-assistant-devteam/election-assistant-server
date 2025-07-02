@@ -3,6 +3,7 @@ package com.runningmate.server.domain.news.service;
 import com.runningmate.server.domain.news.model.NewsItem;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -17,6 +18,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class NewsService {
 
@@ -29,23 +31,23 @@ public class NewsService {
                 String out = r.readLine();           // "Chromium 126.0.6478.114"
                 return out.replaceAll("\\D+", "").substring(0, 3);  // "126"
             }
-        } catch (Exception e) { return ""; }
+        } catch (Exception e) { throw new RuntimeException(e); }
     }
 
     @PostConstruct
     public void initDriver() {
+        WebDriverManager.chromedriver()
+                .clearDriverCache()
+                .clearResolutionCache();
+
         if (os.contains("linux")) {
-            String major = detectChromiumMajor();    // "126"
-            WebDriverManager.chromedriver()
-                    .clearDriverCache()
-                    .clearResolutionCache()
-                    .browserVersion(major)
-                    .setup();
+            String major = detectChromiumMajor();
+            if (major.isBlank()) {
+                throw new IllegalStateException("Chromium version detect failed");
+            }
+            WebDriverManager.chromedriver().browserVersion(major).setup();
         } else {
-            WebDriverManager.chromedriver()
-                    .clearDriverCache()
-                    .clearResolutionCache()
-                    .setup();
+            WebDriverManager.chromedriver().setup(); // 자동 감지
         }
     }
 
