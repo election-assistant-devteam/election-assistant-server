@@ -53,7 +53,7 @@ dependencies {
     implementation 'org.seleniumhq.selenium:selenium-java:4.21.0'
 
     // Selenium WenDriver Manager
-    implementation 'io.github.bonigarcia:webdrivermanager:5.5.3'
+    implementation 'io.github.bonigarcia:webdrivermanager:5.9.2'
 
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
