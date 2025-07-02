@@ -85,13 +85,7 @@ public class PostService {
         boolean hasNext = posts.size() > pageSize ? true : false;
 
         // 리턴한다
-        List<PostSummaryDto> summarys = posts.stream().map(entity -> PostSummaryDto.builder()
-                            .postId(entity.getId())
-                            .title(entity.getTitle())
-                            .content(entity.getContent())
-                            .likeCount(entity.getLikeCount())
-                            .commentCount(entity.getCommentCount())
-                            .build())
+        List<PostSummaryDto> summarys = posts.stream().map(PostSummaryDto::entityToDto)
                     .limit(pageSize)
                     .collect(Collectors.toList());
 
@@ -131,5 +125,11 @@ public class PostService {
         postLikeRepository.save(postLike);
 
         return new LikePostResponse(post.getLikeCount());
+    }
+
+    public GetPopularPostResponse getPopularPosts() {
+        List<Post> top5 = postRepository.findTop5ByOrderByLikeCountDesc();
+        List<PostSummaryDto> summarys = top5.stream().map(PostSummaryDto::entityToDto).collect(Collectors.toList());
+        return new GetPopularPostResponse(summarys);
     }
 }
