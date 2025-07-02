@@ -8,6 +8,7 @@ import com.runningmate.server.domain.community.service.CommentService;
 import com.runningmate.server.domain.community.service.PostCommentService;
 import com.runningmate.server.domain.community.service.PostService;
 import com.runningmate.server.domain.news.schedule.NewsScheduler;
+import com.runningmate.server.domain.news.service.NewsService;
 import com.runningmate.server.domain.politicians.init.PoliticianInitializer;
 import com.runningmate.server.domain.user.model.User;
 import com.runningmate.server.domain.user.service.UserService;
@@ -20,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,6 +43,9 @@ class PostControllerTest {
 
     @MockBean
     private NewsScheduler newsScheduler; // 테스트에서 제외하기 위함
+
+    @MockBean
+    private NewsService newsService;  // 테스트에서 제외하기 위함
 
     @MockBean
     private PoliticianInitializer initializer; // 테스트에서 제외하기 위함
@@ -216,6 +221,31 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.data.comments[0].hasLiked").value(true))
                 .andExpect(jsonPath("$.data.comments[1].likeCount").value(0))
                 .andExpect(jsonPath("$.data.comments[1].hasLiked").value(false));
+    }
+
+    @Test
+    void givenTwoPostWereLiked_whenGetPopularPosts_thenReturnTwoPopularPosts() throws Exception {
+        // given
+        User postWriter = userService.createUser("user1", "pass", "게시글작성자", "asdf@asdf");
+
+        User likeAdder = userService.createUser("user2", "pass", "게시글공감자", "asdf2@asdf");
+
+        List<Long> postIds = IntStream.rangeClosed(1, 5)
+                .mapToObj(i -> createPostWithImages(postWriter, 2).getId())
+                .collect(toList());
+
+        postService.likePost(likeAdder.getId(), postIds.get(0));
+        postService.likePost(likeAdder.getId(), postIds.get(1));
+
+        // when
+        ResultActions actions = mockMvc.perform(get("/posts/popular-posts"));
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.popularPosts.length()").value(2))
+                .andExpect(jsonPath("$.data.popularPosts[0].likeCount").value(1))
+                .andExpect(jsonPath("$.data.popularPosts[1].likeCount").value(1));
     }
 
     private Post createPostWithImages(User user, int imageCount) {
