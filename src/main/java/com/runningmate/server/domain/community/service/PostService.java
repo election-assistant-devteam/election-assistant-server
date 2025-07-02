@@ -128,8 +128,12 @@ public class PostService {
     }
 
     public GetPopularPostResponse getPopularPosts() {
-        List<Post> top5 = postRepository.findTop5ByOrderByLikeCountDesc();
+        List<Post> top5 = getTop5PopularPosts();
         List<PostSummaryDto> summarys = top5.stream().map(PostSummaryDto::entityToDto).collect(Collectors.toList());
         return new GetPopularPostResponse(summarys);
+    }
+
+    private List<Post> getTop5PopularPosts() {
+        return postRepository.findTop5ByLikeCountGreaterThanOrderByLikeCountDesc(0);
     }
 }
