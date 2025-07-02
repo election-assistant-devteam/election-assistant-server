@@ -70,7 +70,8 @@ public class SecurityConfig {
 
                     // 비회원도 사용할 수 있도록 GET 요청에 대해서 허용
                     authorize.requestMatchers(HttpMethod.GET, "/posts").permitAll()
-                            .requestMatchers(HttpMethod.GET, "/posts/*").permitAll();
+                            .requestMatchers(HttpMethod.GET, "/posts/*").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/posts/*/comments").permitAll();
 
                     authorize.anyRequest().authenticated();
                 });

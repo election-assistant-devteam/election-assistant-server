@@ -1,4 +1,4 @@
-package com.runningmate.server.user.repository;
+package com.runningmate.server.domain.user.repository;
 
 import com.runningmate.server.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;

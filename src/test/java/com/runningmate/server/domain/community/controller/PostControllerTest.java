@@ -4,6 +4,7 @@ import com.runningmate.server.domain.community.dto.CreateCommentOnPostRequest;
 import com.runningmate.server.domain.community.model.Image;
 import com.runningmate.server.domain.community.model.Post;
 import com.runningmate.server.domain.community.repository.PostRepository;
+import com.runningmate.server.domain.community.service.CommentService;
 import com.runningmate.server.domain.community.service.PostCommentService;
 import com.runningmate.server.domain.community.service.PostService;
 import com.runningmate.server.domain.news.schedule.NewsScheduler;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
+import static java.util.stream.Collectors.toList;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -57,6 +59,9 @@ class PostControllerTest {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CommentService commentService;
 
     @Autowired
     private EntityManager entityManager;
@@ -186,13 +191,40 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.data.hasLiked").value(false));
     }
 
+    @Test
+    void givenAddLikeToComment_whenGetPostComments_thenHasLikedExists() throws Exception {
+        // given
+        User postWriter = userService.createUser("user1", "pass", "게시글작성자", "asdf@asdf");
+
+        User commentWriter = userService.createUser("user2", "pass", "댓글작성자", "asdf2@asdf");
+
+        Post post = createPostWithImages(postWriter, 2);
+
+        List<Long> commentIdList = LongStream.rangeClosed(1, 2).map(i -> postCommentService.createComment(commentWriter.getId(), post.getId(), CreateCommentOnPostRequest.builder()
+                .content("댓글").isAnonymous(false).parentId(null).build())).boxed().collect(toList());
+
+        commentService.likeComment(postWriter.getId(), commentIdList.get(0));
+
+        // when
+        // then
+        String token = jwtUtil.generateAccessToken(postWriter.getId(), postWriter.getUsername());
+
+        mockMvc.perform(get("/posts/" + post.getId() + "/comments")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.comments[0].likeCount").value(1))
+                .andExpect(jsonPath("$.data.comments[0].hasLiked").value(true))
+                .andExpect(jsonPath("$.data.comments[1].likeCount").value(0))
+                .andExpect(jsonPath("$.data.comments[1].hasLiked").value(false));
+    }
+
     private Post createPostWithImages(User user, int imageCount) {
         List<Image> images = IntStream.rangeClosed(1, imageCount).mapToObj(
                 i -> Image.builder()
                         .imageUrl("image-url" + i)
                         .imageOrder(i)
                         .build()
-        ).collect(Collectors.toList());
+        ).collect(toList());
 
 
         Post post = Post.builder()

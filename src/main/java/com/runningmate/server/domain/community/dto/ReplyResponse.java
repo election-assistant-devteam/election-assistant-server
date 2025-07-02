@@ -14,14 +14,14 @@ public record ReplyResponse(
         Long likeCount,
         Boolean hasLiked
 ) {
-    public static ReplyResponse entityToDto(Comment comment){
+    public static ReplyResponse entityToDto(Comment reply, boolean hasLiked){
         return ReplyResponse.builder()
-                .commentId(comment.getId())
-                .createdAt(comment.getCreatedAt())
-                .writer(comment.getIsAnonymous() ? "익명 " : comment.getWriter().getNickname())
-                .content(comment.getContent())
-                .likeCount(comment.getLikeCount())
-                .hasLiked(false)
+                .commentId(reply.getId())
+                .createdAt(reply.getCreatedAt())
+                .writer(reply.getIsAnonymous() ? "익명 " : reply.getWriter().getNickname())
+                .content(reply.getContent())
+                .likeCount(reply.getLikeCount())
+                .hasLiked(hasLiked)
                 .build();
     }
 }
