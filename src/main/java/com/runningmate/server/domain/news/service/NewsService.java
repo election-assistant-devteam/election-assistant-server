@@ -1,7 +1,6 @@
 package com.runningmate.server.domain.news.service;
 
 import com.runningmate.server.domain.news.model.NewsItem;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
@@ -24,18 +23,18 @@ public class NewsService {
 
     private static final String os = System.getProperty("os.name").toLowerCase();
 
-    @PostConstruct
-    public void initDriver() {
-        if (os.contains("linux")) {
-            WebDriverManager.chromedriver()
-                    .browserBinary("/usr/bin/chromium-browser") // ⭐ 바이너리 직접 지정
-                    .clearDriverCache()
-                    .clearResolutionCache()
-                    .setup();
-        } else {
-            WebDriverManager.chromedriver().setup(); // 자동 감지
-        }
-    }
+//    @PostConstruct
+//    public void initDriver() {
+//        if (os.contains("linux")) {
+//            WebDriverManager.chromedriver()
+//                    .browserBinary("/usr/bin/chromium-browser") // ⭐ 바이너리 직접 지정
+//                    .clearDriverCache()
+//                    .clearResolutionCache()
+//                    .setup();
+//        } else {
+//            WebDriverManager.chromedriver().setup(); // 자동 감지
+//        }
+//    }
 
     public static List<NewsItem> scrapeNews() {
 
@@ -50,12 +49,12 @@ public class NewsService {
         options.addArguments("--remote-allow-origins=*");
         options.addArguments("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
 
-        ChromeDriverService service = new ChromeDriverService.Builder()
-                .withLogOutput(System.err)      // STDERR 로 바로 출력
-                .withVerbose(true)               // 상세 로그
-                .build();
+//        ChromeDriverService service = new ChromeDriverService.Builder()
+//                .withLogOutput(System.err)      // STDERR 로 바로 출력
+//                .withVerbose(true)               // 상세 로그
+//                .build();
 
-        WebDriver driver = new ChromeDriver(service, options);
+        WebDriver driver = new ChromeDriver(options);
         List<NewsItem> newsList = new ArrayList<>();
 
         try {
