@@ -24,28 +24,13 @@ public class NewsService {
 
     private static final String os = System.getProperty("os.name").toLowerCase();
 
-    private static String detectChromiumMajor() {
-        try {
-            Process p = new ProcessBuilder("/usr/bin/chromium-browser", "--version").start();
-            try (var r = p.inputReader()) {
-                String out = r.readLine();           // "Chromium 126.0.6478.114"
-                return out.replaceAll("\\D+", "").substring(0, 3);  // "126"
-            }
-        } catch (Exception e) { throw new RuntimeException(e); }
-    }
-
     @PostConstruct
     public void initDriver() {
-        WebDriverManager.chromedriver()
-                .clearDriverCache()
-                .clearResolutionCache();
-
         if (os.contains("linux")) {
-            String major = detectChromiumMajor();
-            if (major.isBlank()) {
-                throw new IllegalStateException("Chromium version detect failed");
-            }
-            WebDriverManager.chromedriver().browserVersion(major).setup();
+            WebDriverManager.chromedriver()
+                    .clearDriverCache()
+                    .clearResolutionCache()
+                    .setup();
         } else {
             WebDriverManager.chromedriver().setup(); // 자동 감지
         }
