@@ -28,6 +28,7 @@ public class NewsService {
     public void initDriver() {
         if (os.contains("linux")) {
             WebDriverManager.chromedriver()
+                    .browserBinary("/usr/bin/chromium-browser") // ⭐ 바이너리 직접 지정
                     .clearDriverCache()
                     .clearResolutionCache()
                     .setup();
