@@ -64,6 +64,14 @@ dependencies {
     // ⭐ WebDriverManager 6.x 가 필요로 하는 Apache HttpClient5/Core5
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.3'
     implementation 'org.apache.httpcomponents.core5:httpcore5:5.2.3'
+
+}
+
+configurations.all {
+    resolutionStrategy {
+        force 'org.apache.httpcomponents.client5:httpclient5:5.2.3'
+        force 'org.apache.httpcomponents.core5:httpcore5:5.2.3'
+    }
 }
 
 tasks.named('test') {
