@@ -237,6 +237,9 @@ class PostControllerTest {
         postService.likePost(likeAdder.getId(), postIds.get(0));
         postService.likePost(likeAdder.getId(), postIds.get(1));
 
+        entityManager.flush();
+        entityManager.clear();
+
         // when
         ResultActions actions = mockMvc.perform(get("/posts/popular-posts"));
 
