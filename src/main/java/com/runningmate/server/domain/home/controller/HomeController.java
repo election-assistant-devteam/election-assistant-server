@@ -18,6 +18,6 @@ public class HomeController {
     @GetMapping
     public BaseResponse<GetHomeResponse> getHome(){
         log.info("[getHome]");
-        return new BaseResponse(homeService.getData());
+        return new BaseResponse(homeService.getData(3, 5));
     }
 }
