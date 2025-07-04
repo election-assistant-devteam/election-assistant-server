@@ -1,9 +1,43 @@
 package com.runningmate.server.domain.home.service;
 
+import com.runningmate.server.domain.community.model.Post;
+import com.runningmate.server.domain.community.repository.PostRepository;
+import com.runningmate.server.domain.home.dto.GetHomeResponse;
+import com.runningmate.server.domain.home.dto.PopularPoliticianResponse;
+import com.runningmate.server.domain.home.dto.PopularPostResponse;
+import com.runningmate.server.domain.politicians.model.Politician;
+import com.runningmate.server.domain.politicians.repository.PoliticianRepository;
+import com.runningmate.server.domain.watch.repository.WatchListRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class HomeService {
+    private final WatchListRepository watchListRepository;
+    private final PoliticianRepository politicianRepository;
+    private final PostRepository postRepository;
+    public GetHomeResponse getData(final int politicianSize, final int postSize) {
+        log.info("[getData]");
+
+        // 인기 정치인 조회
+        List<Politician> topPoliticians = watchListRepository.findTopPoliticians(PageRequest.of(0, politicianSize));
+        if(topPoliticians.size() < politicianSize){ // 부족할 경우 랜덤하게 선택된 정치인을 추가
+            List<Politician> randomPoliticians = politicianRepository.findRandomPoliticians(politicianSize - topPoliticians.size());
+            topPoliticians.addAll(randomPoliticians);
+        }
+        List<PopularPoliticianResponse> popularPoliticians = topPoliticians.stream().map(PopularPoliticianResponse::entityToDto).collect(Collectors.toList());
+
+        // 인기 게시글 조회
+        List<Post> topPosts = postRepository.findByLikeCountGreaterThanOrderByLikeCountDesc(0, PageRequest.of(0, postSize));
+        List<PopularPostResponse> popularPosts = topPosts.stream().map(PopularPostResponse::entityToDto).collect(Collectors.toList());
+
+        return new GetHomeResponse(popularPoliticians, popularPosts);
+    }
 }
