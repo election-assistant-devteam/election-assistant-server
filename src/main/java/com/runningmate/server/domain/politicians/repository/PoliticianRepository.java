@@ -29,7 +29,6 @@ public interface PoliticianRepository extends JpaRepository<Politician, Long> {
 
     @Query(value = """
         SELECT * FROM politician
-        WHERE imageUrl IS NOT NULL
         ORDER BY RAND()
         LIMIT :size
     """, nativeQuery = true)
