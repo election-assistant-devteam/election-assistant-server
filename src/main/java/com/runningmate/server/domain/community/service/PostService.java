@@ -134,6 +134,6 @@ public class PostService {
     }
 
     private List<Post> getTop5PopularPosts() {
-        return postRepository.findTop5ByLikeCountGreaterThanOrderByLikeCountDesc(0);
+        return postRepository.findByLikeCountGreaterThanOrderByLikeCountDesc(0, PageRequest.of(0, 5));
     }
 }
