@@ -19,5 +19,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     """)
     List<Post> findWithKeywordAndCursor(@Param("keyword")String keyword, @Param("lastId") Long lastId, Pageable pageable);
 
-    List<Post> findTop5ByLikeCountGreaterThanOrderByLikeCountDesc(int likeCount);
+    List<Post> findByLikeCountGreaterThanOrderByLikeCountDesc(int likeCount, Pageable pageable);
 }
