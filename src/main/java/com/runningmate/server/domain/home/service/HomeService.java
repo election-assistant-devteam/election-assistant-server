@@ -26,6 +26,10 @@ public class HomeService {
     public GetHomeResponse getData(final int politicianSize, final int postSize) {
         log.info("[getData]");
 
+        if (politicianSize < 0 || postSize < 0) {
+           throw new IllegalArgumentException("조회할 데이터의 수는 음수일 수 없습니다.");
+        }
+
         // 인기 정치인 조회
         List<Politician> topPoliticians = watchListRepository.findTopPoliticians(PageRequest.of(0, politicianSize));
         if(topPoliticians.size() < politicianSize){ // 부족할 경우 랜덤하게 선택된 정치인을 추가
