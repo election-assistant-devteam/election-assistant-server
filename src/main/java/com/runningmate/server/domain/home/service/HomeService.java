@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -33,8 +34,7 @@ public class HomeService {
         // 인기 정치인 조회
         List<Politician> topPoliticians = watchListRepository.findTopPoliticians(PageRequest.of(0, politicianSize));
         if(topPoliticians.size() < politicianSize){ // 부족할 경우 랜덤하게 선택된 정치인을 추가
-            List<Politician> randomPoliticians = politicianRepository.findRandomPoliticians(politicianSize - topPoliticians.size());
-            topPoliticians.addAll(randomPoliticians);
+            addRandomPoliticians(politicianSize, topPoliticians);
         }
         List<PopularPoliticianResponse> popularPoliticians = topPoliticians.stream().map(PopularPoliticianResponse::entityToDto).collect(Collectors.toList());
 
@@ -43,5 +43,22 @@ public class HomeService {
         List<PopularPostResponse> popularPosts = topPosts.stream().map(PopularPostResponse::entityToDto).collect(Collectors.toList());
 
         return new GetHomeResponse(popularPoliticians, popularPosts);
+    }
+
+    private void addRandomPoliticians(int politicianSize, List<Politician> topPoliticians) {
+        log.info("정치인 수가 충분하지 않아 {}명만 반환됨", topPoliticians.size());
+
+        Set<Long> existingIds = topPoliticians.stream()
+                .map(Politician::getId)
+                .collect(Collectors.toSet());
+
+        List<Politician> randomPoliticians = politicianRepository.findRandomPoliticians(politicianSize * 2);
+
+        List<Politician> additionalData = randomPoliticians.stream()
+                .filter(politician -> !existingIds.contains(politician))
+                .limit(politicianSize - topPoliticians.size())
+                .collect(Collectors.toList());
+
+        topPoliticians.addAll(additionalData);
     }
 }
