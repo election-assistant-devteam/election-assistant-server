@@ -1,8 +1,11 @@
 package com.runningmate.server.domain.watch.repository;
 
+import com.runningmate.server.domain.politicians.model.Politician;
 import com.runningmate.server.domain.watch.model.UserWatchList;
 import com.runningmate.server.domain.watch.model.UserWatchListId;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,4 +16,12 @@ public interface WatchListRepository extends JpaRepository<UserWatchList, UserWa
     // 특정 정치인을 특정 유저가 지켜보는지 여부
     boolean existsById(UserWatchListId id);
     List<UserWatchList> findByUser_Id(Long userId);
+
+    @Query("""
+        select w.politician
+        from UserWatchList w
+        group by w.politician
+        order by count(w.politician) desc
+    """)
+    List<Politician> findTopPoliticians(Pageable pageable);
 }

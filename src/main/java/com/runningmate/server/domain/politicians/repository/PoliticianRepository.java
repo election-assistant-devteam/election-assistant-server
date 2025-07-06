@@ -26,4 +26,11 @@ public interface PoliticianRepository extends JpaRepository<Politician, Long> {
 
     @Query("SELECT DISTINCT p.party FROM Politician p")
     List<String> findAllParties();
+
+    @Query(value = """
+        SELECT * FROM politician
+        ORDER BY RAND()
+        LIMIT :size
+    """, nativeQuery = true)
+    List<Politician> findRandomPoliticians(@Param("size") int size);
 }
