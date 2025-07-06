@@ -55,7 +55,7 @@ public class HomeService {
         List<Politician> randomPoliticians = politicianRepository.findRandomPoliticians(politicianSize * 2);
 
         List<Politician> additionalData = randomPoliticians.stream()
-                .filter(politician -> !existingIds.contains(politician))
+                .filter(politician -> !existingIds.contains(politician.getId()))
                 .limit(politicianSize - topPoliticians.size())
                 .collect(Collectors.toList());
 
