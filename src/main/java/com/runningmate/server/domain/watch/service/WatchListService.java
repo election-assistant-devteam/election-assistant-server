@@ -13,7 +13,9 @@ import com.runningmate.server.global.common.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.beans.Transient;
 import java.util.List;
 
 import static com.runningmate.server.global.common.response.status.BaseExceptionResponseStatus.*;
@@ -46,6 +48,13 @@ public class WatchListService {
                                     .build());
         }
 
+        return new AddWatchListResponse(politicianId);
+    }
+
+    public AddWatchListResponse unfollowPolitician(Long userId, Long politicianId){
+        UserWatchListId id = new UserWatchListId(userId, politicianId);
+
+        watchListRepository.deleteById(id);
         return new AddWatchListResponse(politicianId);
     }
 
