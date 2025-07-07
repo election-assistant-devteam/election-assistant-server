@@ -60,7 +60,7 @@ public class SecurityConfig {
                             .requestMatchers(
                                     "/edit/preference", "/auth/login", "/users/create", "/users/update",
                                     "/calendar/schedules/**", "/elections/*/candidates", "/politicians/*/detail",
-                                    "/news", "/", "/politicians", "/parties", "/home"
+                                    "/news", "/", "/politicians", "/parties", "/home", "/politicians/likes/*", "/politicians/watch/tf/*"
                             ).permitAll()
                             .requestMatchers(SWAGGER_ENDPOINTS).permitAll();
 

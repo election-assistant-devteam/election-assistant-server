@@ -21,9 +21,21 @@ public class WatchListController {
         return new BaseResponse<>(addWatchListResponse);
     }
 
+    @DeleteMapping("/politicians/likes/{politicianId}")
+    public BaseResponse<Object> removeInterestPoliticians(@LoginUserId Long userId, @PathVariable Long politicianId){
+        AddWatchListResponse addWatchListResponse = watchListService.unfollowPolitician(userId, politicianId);
+        return new BaseResponse<>(addWatchListResponse);
+    }
+
     @GetMapping("/politicians/watch")
     public BaseResponse<List<WatchedPoliticianResponse>> getWatchList(@LoginUserId Long userId) {
         List<WatchedPoliticianResponse> response = watchListService.getWatchedPoliticians(userId);
+        return new BaseResponse<>(response);
+    }
+
+    @GetMapping("/politicians/watch/tf/{politicianId}")
+    public BaseResponse<Boolean> getWatchTF(@LoginUserId Long userId, @PathVariable Long politicianId) {
+        Boolean response = watchListService.getWatchTF(userId, politicianId);
         return new BaseResponse<>(response);
     }
 }
