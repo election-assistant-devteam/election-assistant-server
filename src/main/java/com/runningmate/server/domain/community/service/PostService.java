@@ -90,7 +90,7 @@ public class PostService {
                     .collect(Collectors.toList());
 
         return new GetPostsResponse(summarys,
-                summarys.get(summarys.size() - 1).postId(),
+                summarys.size() > 0 ? summarys.get(summarys.size() - 1).postId() : 0,
                 hasNext);
     }
 
