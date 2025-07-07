@@ -11,12 +11,14 @@ import com.runningmate.server.domain.watch.model.UserWatchListId;
 import com.runningmate.server.domain.watch.repository.WatchListRepository;
 import com.runningmate.server.global.common.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 import static com.runningmate.server.global.common.response.status.BaseExceptionResponseStatus.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class WatchListService {
@@ -54,6 +56,14 @@ public class WatchListService {
         return watchList.stream()
                 .map(watch -> WatchedPoliticianResponse.from(watch.getPolitician()))
                 .toList();
+    }
+
+    public Boolean getWatchTF(Long userId, Long politicianId) {
+        List<UserWatchList> watchList = watchListRepository.findByUser_Id(userId);
+        // politicianId가 watchList에 포함되어 있는지 확인
+        boolean isWatching = watchList.stream()
+                .anyMatch(watch -> watch.getPolitician().getId().equals(politicianId));
+        return isWatching;
     }
 
 

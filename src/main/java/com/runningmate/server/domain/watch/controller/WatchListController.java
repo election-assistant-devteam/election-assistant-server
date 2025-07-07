@@ -26,4 +26,10 @@ public class WatchListController {
         List<WatchedPoliticianResponse> response = watchListService.getWatchedPoliticians(userId);
         return new BaseResponse<>(response);
     }
+
+    @GetMapping("/politicians/watch/tf/{politicianId}")
+    public BaseResponse<Boolean> getWatchTF(@LoginUserId Long userId, @PathVariable Long politicianId) {
+        Boolean response = watchListService.getWatchTF(userId, politicianId);
+        return new BaseResponse<>(response);
+    }
 }
