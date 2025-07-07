@@ -1,11 +1,13 @@
 package com.runningmate.server.domain.watch.repository;
 
 import com.runningmate.server.domain.politicians.model.Politician;
+import com.runningmate.server.domain.watch.dto.PoliticianWithWatchCount;
 import com.runningmate.server.domain.watch.model.UserWatchList;
 import com.runningmate.server.domain.watch.model.UserWatchListId;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,4 +26,13 @@ public interface WatchListRepository extends JpaRepository<UserWatchList, UserWa
         order by count(w.politician) desc
     """)
     List<Politician> findTopPoliticians(Pageable pageable);
+
+    @Query("""
+        select new com.runningmate.server.domain.watch.dto.PoliticianWithWatchCount(w.politician, count(w))
+        from UserWatchList w
+        where w.user.id = :userId
+        group by w.politician
+        order by count(w) desc
+    """)
+    List<PoliticianWithWatchCount> findTopPoliticiansByUserId(@Param("userId") long userId, Pageable pageable);
 }
