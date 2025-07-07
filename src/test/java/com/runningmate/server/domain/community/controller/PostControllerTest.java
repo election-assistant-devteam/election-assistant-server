@@ -116,6 +116,47 @@ class PostControllerTest {
     }
 
     @Test
+    void givenFourPostsContainingKeyword_whenGetPosts_thenReturnFourPosts() throws Exception {
+        // given
+        User user = userService.createUser("user1", "pass", "작성자", "asdf@asdf");
+
+        final String KEYWORD = "keyword";
+        final String NOT_A_KEYWORD = "test";
+
+        IntStream.rangeClosed(1, 2).forEach(i ->{
+            createPostWithTitleAndContent(user, KEYWORD, NOT_A_KEYWORD);
+            createPostWithTitleAndContent(user, NOT_A_KEYWORD, KEYWORD);
+        });
+        IntStream.rangeClosed(1, 10).forEach(i ->{
+            createPostWithTitleAndContent(user, NOT_A_KEYWORD, NOT_A_KEYWORD);
+        });
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        ResultActions actions = mockMvc.perform(get("/posts?keyword=" + KEYWORD));
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.posts.length()").value(4))
+                .andExpect(jsonPath("$.data.hasMore").value(false));
+    }
+
+    private Post createPostWithTitleAndContent(User user, String title, String content) {
+        Post post = Post.builder()
+                .title(title)
+                .content(content)
+                .writer(user)
+                .build();
+
+        postRepository.save(post);
+
+        return post;
+    }
+
+    @Test
     void givenTwoReplies_whenGetPostComments_thenReturnTwoReplies() throws Exception {
         // given
         User postWriter = userService.createUser("user1", "pass", "게시글작성자", "asdf@asdf");
