@@ -13,18 +13,19 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequiredArgsConstructor
+@RequestMapping("users")
 @RestController
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/users/create")
+    @PostMapping("/create")
     public BaseResponse<Void> createUser(@RequestBody @Valid CreateUserRequest request){
         log.info("[postUser] request = {}", request);
         userService.createUser(request.getUsername(), request.getPassword(), request.getNickname(), request.getEmail());
         return new BaseResponse<>(null);
     }
 
-    @PostMapping("/users/update")
+    @PostMapping("/update")
     public BaseResponse<Void> updateUser(@RequestParam("prevId") Long prevId, @RequestBody UpdateUserRequest req){
         log.info("[updateUser] prevId = {}", prevId);
         userService.updateUser(prevId, req.getPassword(), req.getNickname());
@@ -38,7 +39,7 @@ public class UserController {
         return new BaseResponse<>(null);
     }
 
-    @GetMapping("users")
+    @GetMapping
     public BaseResponse<GetMyPageResponse> getMyPage(@LoginUserId Long userId){
         log.info("[getMyPage] userId = {}", userId);
         return new BaseResponse<>(userService.findUserDataForMyPage(userId));
