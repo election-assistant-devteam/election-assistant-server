@@ -1,9 +1,11 @@
 package com.runningmate.server.domain.user.controller;
 
 import com.runningmate.server.domain.user.dto.CreateUserRequest;
+import com.runningmate.server.domain.user.dto.GetMyPageResponse;
 import com.runningmate.server.domain.user.dto.UpdateUserRequest;
 import com.runningmate.server.domain.user.service.UserService;
 import com.runningmate.server.global.common.response.BaseResponse;
+import com.runningmate.server.global.jwt.LoginUserId;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,5 +36,11 @@ public class UserController {
         log.info(req.getPartyOfInterest());
         userService.updatePreference(prevId, req.getPartyOfInterest(), req.getPoliticianOfInterest());
         return new BaseResponse<>(null);
+    }
+
+    @GetMapping("users")
+    public BaseResponse<GetMyPageResponse> getMyPage(@LoginUserId Long userId){
+        log.info("[getMyPage] userId = {}", userId);
+        return new BaseResponse<>(userService.findUserDataForMyPage(userId));
     }
 }
