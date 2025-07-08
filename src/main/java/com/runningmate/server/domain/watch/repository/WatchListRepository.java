@@ -34,5 +34,5 @@ public interface WatchListRepository extends JpaRepository<UserWatchList, UserWa
         group by w.politician
         order by count(w) desc
     """)
-    List<PoliticianWithWatchCount> findTopPoliticiansByUserId(@Param("userId") long userId, Pageable pageable);
+    List<PoliticianWithWatchCount> findTopPoliticiansByUserId(@Param("userId") Long userId, Pageable pageable);
 }
