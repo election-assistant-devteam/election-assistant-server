@@ -21,5 +21,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findByLikeCountGreaterThanOrderByLikeCountDesc(int likeCount, Pageable pageable);
 
-    long countByWriterId(long writerId);
+    long countByWriterId(Long writerId);
 }
