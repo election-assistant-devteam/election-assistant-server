@@ -8,6 +8,7 @@ import com.runningmate.server.domain.user.repository.UserRepository;
 import com.runningmate.server.domain.watch.dto.PoliticianWithWatchCount;
 import com.runningmate.server.domain.watch.repository.WatchListRepository;
 import com.runningmate.server.global.common.exception.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +20,7 @@ import static com.runningmate.server.global.common.response.status.BaseException
 
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 @Service
 public class UserService {
     private final UserRepository userRepository;
