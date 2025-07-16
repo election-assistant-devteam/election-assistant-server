@@ -105,7 +105,7 @@ public class UserService {
         // dto로 변환
         List<PostSummaryDto> summarys = posts.stream().map(PostSummaryDto::entityToDto).limit(size).collect(Collectors.toList());
         Long nextLastId = getLastId(summarys);
-        Boolean hasMore = summarys.size() > size;
+        Boolean hasMore = posts.size() > size;
 
         return new GetMyPostsResponse(summarys, nextLastId, hasMore);
     }
