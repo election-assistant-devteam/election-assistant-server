@@ -1,6 +1,8 @@
 package com.runningmate.server.domain.community.repository;
 
 import com.runningmate.server.domain.community.model.Post;
+import com.runningmate.server.domain.user.model.User;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,4 +24,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByLikeCountGreaterThanOrderByLikeCountDesc(int likeCount, Pageable pageable);
 
     long countByWriterId(Long writerId);
+
+
+    @Query("""
+            select p from Post p 
+            where (:lastId is null or p.id < :lastId) and p.writer.id = :userId
+            order by p.id desc
+    """)
+    List<Post> findUserPostsByCursor(@Param("userId") Long userId, @Param("lastId") Long lastId, PageRequest of);
 }
