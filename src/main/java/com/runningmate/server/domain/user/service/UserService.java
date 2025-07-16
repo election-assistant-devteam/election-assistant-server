@@ -1,7 +1,10 @@
 package com.runningmate.server.domain.user.service;
 
+import com.runningmate.server.domain.community.dto.PostSummaryDto;
+import com.runningmate.server.domain.community.model.Post;
 import com.runningmate.server.domain.community.repository.PostRepository;
 import com.runningmate.server.domain.user.dto.GetMyPageResponse;
+import com.runningmate.server.domain.user.dto.GetMyPostsResponse;
 import com.runningmate.server.domain.user.exception.SameUserExistsException;
 import com.runningmate.server.domain.user.model.User;
 import com.runningmate.server.domain.user.repository.UserRepository;
@@ -15,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.runningmate.server.global.common.response.status.BaseExceptionResponseStatus.*;
 
@@ -90,5 +94,23 @@ public class UserService {
         List<PoliticianWithWatchCount> politiciansWithWatchCount = watchListRepository.findTopPoliticiansByUserId(userId, PageRequest.of(0, 3));
 
         return GetMyPageResponse.from(user, postCount, politiciansWithWatchCount);
+    }
+
+    public GetMyPostsResponse findUserPostsByCursor(Long userId, Long lastId, int size) {
+        log.info("[findUserPosts]");
+
+        // 사용자가 작성한 게시글을 조회
+        List<Post> posts = postRepository.findUserPostsByCursor(userId, lastId, PageRequest.of(0, size + 1));
+
+        // dto로 변환
+        List<PostSummaryDto> summarys = posts.stream().map(PostSummaryDto::entityToDto).limit(size).collect(Collectors.toList());
+        Long nextLastId = getLastId(summarys);
+        Boolean hasMore = posts.size() > size;
+
+        return new GetMyPostsResponse(summarys, nextLastId, hasMore);
+    }
+
+    private static long getLastId(List<PostSummaryDto> summarys) {
+        return summarys.size() > 0 ? summarys.get(summarys.size() - 1).postId() : 0L;
     }
 }
