@@ -31,5 +31,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             where (:lastId is null or p.id < :lastId) and p.writer.id = :userId
             order by p.id desc
     """)
-    List<Post> findUserPostsByCursor(@Param("userId") Long userId, @Param("lastId") Long lastId, PageRequest of);
+    List<Post> findUserPostsByCursor(@Param("userId") Long userId, @Param("lastId") Long lastId, Pageable pageable);
 }
