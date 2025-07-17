@@ -21,7 +21,7 @@ public class PostController {
     private final PostService postService;
     private final PostCommentService postCommentService;
     @PostMapping
-    public BaseResponse<Object> createPost(@LoginUserId Long userId, @RequestPart List<MultipartFile> images, @RequestPart CreatePostRequest request){
+    public BaseResponse<Object> createPost(@LoginUserId Long userId, @RequestPart(required = false) List<MultipartFile> images, @RequestPart CreatePostRequest request){
         log.info("[createPost] userId = {}", userId);
         long postId = postService.create(userId, images, request);
         return new BaseResponse(Map.of("postId", postId));
