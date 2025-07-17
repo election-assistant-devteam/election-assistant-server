@@ -39,9 +39,6 @@ public class PostService {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
 
-        // 이미지 리스트를 s3에 저장
-        List<Image> images = uploadImagesToS3(files);
-
         // 게시물을 저장
         Post post = Post.builder()
                 .title(request.title())
@@ -49,7 +46,11 @@ public class PostService {
                 .writer(user)
                 .build();
 
-        images.stream().forEach(image -> image.setPost(post));
+        // 이미지 리스트를 s3에 저장
+        if(files != null){
+            List<Image> images = uploadImagesToS3(files);
+            images.stream().forEach(image -> image.setPost(post));
+        }
 
         Post save = postRepository.save(post);
 
