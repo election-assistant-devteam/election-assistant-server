@@ -1,7 +1,6 @@
 package com.runningmate.server.global.config;
 
 import com.runningmate.server.global.jwt.JwtAuthenticationFilter;
-import com.runningmate.server.global.jwt.JwtUtil;
 import com.runningmate.server.global.security.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +31,9 @@ public class SecurityConfig {
     };
     @Value("${spring.profiles.active:default}")
     private String activeProfile;
+
+    @Value("${cors.allowed-origin}")
+    private String allowedOrigin;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -68,10 +70,10 @@ public class SecurityConfig {
                         authorize.requestMatchers("/h2-console/**").permitAll();
                     }
 
-                    // 비회원도 사용할 수 있도록 GET 요청에 대해서 허용
-                    authorize.requestMatchers(HttpMethod.GET, "/posts").permitAll()
-                            .requestMatchers(HttpMethod.GET, "/posts/*").permitAll()
-                            .requestMatchers(HttpMethod.GET, "/posts/*/comments").permitAll();
+                    // 비회원도 커뮤니티에서 조회할 수 있도록 GET 요청에 대해서 허용
+                    authorize.requestMatchers(HttpMethod.GET, "/posts/**").permitAll();
+
+                    authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
 
                     authorize.anyRequest().authenticated();
                 });
@@ -95,7 +97,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cfg = new CorsConfiguration();
         // 실제 운영 도메인만 허용하려면 "*" 대신 명시적으로 적어 주세요.
-        cfg.setAllowedOriginPatterns(List.of("*"));
+        cfg.setAllowedOriginPatterns(List.of(allowedOrigin));
         cfg.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         cfg.setAllowedHeaders(List.of("*"));            // Content-Type, Authorization 등 모두 허용
         cfg.setAllowCredentials(true);                  // 쿠키/인증정보 허용
