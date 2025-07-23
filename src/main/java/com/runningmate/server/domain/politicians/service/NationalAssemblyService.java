@@ -46,6 +46,8 @@ public class NationalAssemblyService {
 
         List<Politician> politicians = findPoliticiansByBirthdayAndParty(birthdays, names);
 
+        log.info("이미지를 업데이트할 국회의원 수 = {}", politicians.size());
+
         // 3. 기존 db에 생일과 소속당을 기반으로 국회의원 imgUrl을 추가시킨다.
         updateImageUrl(politicians, naRows);
         checkImageUrls(); // 디버깅용
@@ -55,8 +57,8 @@ public class NationalAssemblyService {
     public void checkImageUrls() {
         List<Politician> politicians = politicianRepository.findAll();
         for (Politician politician : politicians) {
-            log.info("이름: {}, 정당: {}, 이미지 URL: {}",
-                    politician.getName(), politician.getParty(), politician.getImageUrl());
+//            log.info("이름: {}, 정당: {}, 이미지 URL: {}",
+//                    politician.getName(), politician.getParty(), politician.getImageUrl());
         }
     }
 

@@ -55,7 +55,7 @@ public class CandidateApiClient {
                     .toEntity(String.class);
 
             String responseBody = responseEntity.getBody();
-            log.info("candidate. {}", responseBody);
+//            log.info("candidate. {}", responseBody);
 
             // Json을 객체로 변환
             //CandidateApiResponse response2 = getCandidateApiResponse(responseBody);
@@ -70,8 +70,10 @@ public class CandidateApiClient {
             }
 
 
-            log.info("{}", responseEntity);
+//            log.info("{}", responseEntity);
         }
+
+//        log.info("results size = {}", results.size());
 
         return results;
     }
@@ -84,9 +86,9 @@ public class CandidateApiClient {
             List<CandidateItem> candidateItems = requestCndaInfo(electionId, electionType);
             allCandidateItems.addAll(candidateItems);
 
-            //log.info("{}", candidateItems.size()); //699
+            log.info("{} 선거에서 {}개 데이터 파싱", electionId, candidateItems.size()); //699
         }
-        //log.info("itemSize {}", allCandidateItems.size()); // 953
+        log.info("총 후보자 수 {}", allCandidateItems.size()); // 953
         return allCandidateItems;
     }
 }
