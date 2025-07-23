@@ -72,13 +72,15 @@ public class NationalAssemblyApiClient {
             // 올바른 rowList 가져오기 & Null 체크
             if (response.getAllNaMember().size() > 1 && response.getAllNaMember().get(1).getRowList() != null) {
                 results.addAll(response.getAllNaMember().get(1).getRowList());
-                //log.info("result size {}", results.size());
+//                log.info("result size {}", results.size());
             } else {
                 break;
             }
 
 
         }
+
+        log.info("results size = {}", results.size());
 
         return results;
     }

@@ -52,7 +52,7 @@ public class ElectionCodeApiClient {
                     .toEntity(String.class);
 
             responseBody = responseEntity.getBody();
-            log.info(responseBody);
+//            log.info(responseBody);
 
             // Json 파싱
             // JSON을 Java 객체로 변환
