@@ -12,8 +12,5 @@ public class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
-    @Test
-    void saveTest(){
 
-    }
 }

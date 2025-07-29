@@ -4,6 +4,9 @@ import com.runningmate.server.domain.calendar.dto.GetSchedulesResponse;
 import com.runningmate.server.domain.calendar.model.Schedule;
 import com.runningmate.server.domain.calendar.model.ScheduleType;
 import com.runningmate.server.domain.calendar.repository.ScheduleRepository;
+import com.runningmate.server.domain.news.schedule.NewsScheduler;
+import com.runningmate.server.domain.news.service.NewsService;
+import com.runningmate.server.domain.politicians.init.PoliticianInitializer;
 import com.runningmate.server.domain.user.model.User;
 import com.runningmate.server.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -12,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
 import java.util.Random;
@@ -19,6 +23,9 @@ import java.util.Random;
 @SpringBootTest
 @Transactional
 class CalendarServiceTest {
+    @MockBean private NewsScheduler newsScheduler; // 테스트에서 제외하기 위함
+    @MockBean private NewsService newsService;  // 테스트에서 제외하기 위함
+    @MockBean private PoliticianInitializer initializer; // 테스트에서 제외하기 위함
     @Autowired private UserRepository userRepository;
     @Autowired private ScheduleRepository scheduleRepository;
     @Autowired private CalendarService calendarService;
