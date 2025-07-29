@@ -52,6 +52,6 @@ public class UserController {
     @GetMapping("/watching-politicians")
     public BaseResponse<GetMyWatchingPoliticians> getMyWatchingPoliticians(@LoginUserId Long userId, @RequestParam(required = false) Long lastId){
         log.info("[getMyWatchingPoliticians] userId={} lastId={}", userId, lastId);
-        return new BaseResponse<>(userService.findWatchingPoliticiansByCursor(userId, lastId));
+        return new BaseResponse<>(userService.findWatchingPoliticiansByCursor(userId, lastId, 20));
     }
 }
