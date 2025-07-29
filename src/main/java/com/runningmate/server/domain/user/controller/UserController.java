@@ -1,9 +1,6 @@
 package com.runningmate.server.domain.user.controller;
 
-import com.runningmate.server.domain.user.dto.CreateUserRequest;
-import com.runningmate.server.domain.user.dto.GetMyPageResponse;
-import com.runningmate.server.domain.user.dto.GetMyPostsResponse;
-import com.runningmate.server.domain.user.dto.UpdateUserRequest;
+import com.runningmate.server.domain.user.dto.*;
 import com.runningmate.server.domain.user.service.UserService;
 import com.runningmate.server.global.common.response.BaseResponse;
 import com.runningmate.server.global.jwt.LoginUserId;
@@ -50,5 +47,11 @@ public class UserController {
     public BaseResponse<GetMyPostsResponse> getMyPosts(@LoginUserId Long userId, @RequestParam(required = false) Long lastId){
         log.info("[getMyPosts] userId = {} lastId = {}", userId, lastId);
         return new BaseResponse<>(userService.findUserPostsByCursor(userId, lastId, 20));
+    }
+
+    @GetMapping("/watching-politicians")
+    public BaseResponse<GetMyWatchingPoliticians> getMyWatchingPoliticians(@LoginUserId Long userId, @RequestParam(required = false) Long lastId){
+        log.info("[getMyWatchingPoliticians] userId={} lastId={}", userId, lastId);
+        return new BaseResponse<>(userService.findWatchingPoliticiansByCursor(userId, lastId));
     }
 }
