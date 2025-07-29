@@ -38,6 +38,7 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
 
     // 정치인 관련 에러
     POLITICIAN_NOT_FOUND(40400, "존재하지 않는 정치인입니다."),
+    DUPLICATE_WATCHING_POLITICIAN(40400, "이미 지켜보기 중인 정치인입니다."),
 
     // 게시글 관련 에러
     POST_NOT_FOUND(40400, "존재하지 않는 게시글입니다"),
