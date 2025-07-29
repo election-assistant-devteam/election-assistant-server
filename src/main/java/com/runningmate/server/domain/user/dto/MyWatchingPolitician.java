@@ -1,7 +1,8 @@
 package com.runningmate.server.domain.user.dto;
 
 public record MyWatchingPolitician(
-           Long politicianId,
-           String party,
-           String name
+        Long watchingPoliticianId,
+        Long politicianId,
+        String party,
+        String name
 ){}
