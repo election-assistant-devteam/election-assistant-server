@@ -5,6 +5,8 @@ import com.runningmate.server.domain.community.model.Post;
 import com.runningmate.server.domain.community.repository.PostRepository;
 import com.runningmate.server.domain.user.dto.GetMyPageResponse;
 import com.runningmate.server.domain.user.dto.GetMyPostsResponse;
+import com.runningmate.server.domain.user.dto.GetMyWatchingPoliticians;
+import com.runningmate.server.domain.user.dto.MyWatchingPolitician;
 import com.runningmate.server.domain.user.exception.SameUserExistsException;
 import com.runningmate.server.domain.user.model.User;
 import com.runningmate.server.domain.user.repository.UserRepository;
@@ -104,13 +106,25 @@ public class UserService {
 
         // dto로 변환
         List<PostSummaryDto> summarys = posts.stream().map(PostSummaryDto::entityToDto).limit(size).collect(Collectors.toList());
-        Long nextLastId = getLastId(summarys);
+        Long nextLastId = summarys.size() > 0 ? summarys.get(summarys.size() - 1).postId() : 0L;
         Boolean hasMore = posts.size() > size;
 
         return new GetMyPostsResponse(summarys, nextLastId, hasMore);
     }
 
-    private static long getLastId(List<PostSummaryDto> summarys) {
-        return summarys.size() > 0 ? summarys.get(summarys.size() - 1).postId() : 0L;
+    public GetMyWatchingPoliticians findWatchingPoliticiansByCursor(Long userId, Long lastId, int size) {
+        log.info("[findWatchingPoliticiansByCursor]");
+
+        // 지켜보기 중인 정치인을 페이징해서 조회
+        List<MyWatchingPolitician> politicians = watchListRepository.findWatchingPoliticiansByCursor(userId, lastId, PageRequest.of(0, size + 1));
+
+        boolean hasMore = politicians.size() > size;
+        if(hasMore){
+            politicians = politicians.subList(0, size);
+        }
+        Long newLastId = politicians.size() > 0 ? politicians.get(politicians.size() - 1).watchingPoliticianId() : 0L;
+
+        // dto로 응답
+        return new GetMyWatchingPoliticians(politicians, newLastId, hasMore);
     }
 }

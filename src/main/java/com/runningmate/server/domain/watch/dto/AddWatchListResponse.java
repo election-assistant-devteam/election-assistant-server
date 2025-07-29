@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class AddWatchListResponse {
-    private Long politicianId;
+    private Long watchingPoliticianId;
 }

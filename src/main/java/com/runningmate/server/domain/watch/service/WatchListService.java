@@ -1,5 +1,6 @@
 package com.runningmate.server.domain.watch.service;
 
+import com.runningmate.server.domain.community.exception.AlreadyLikedException;
 import com.runningmate.server.domain.politicians.model.Politician;
 import com.runningmate.server.domain.politicians.repository.PoliticianRepository;
 import com.runningmate.server.domain.user.model.User;
@@ -7,15 +8,12 @@ import com.runningmate.server.domain.user.repository.UserRepository;
 import com.runningmate.server.domain.watch.dto.AddWatchListResponse;
 import com.runningmate.server.domain.watch.dto.WatchedPoliticianResponse;
 import com.runningmate.server.domain.watch.model.UserWatchList;
-import com.runningmate.server.domain.watch.model.UserWatchListId;
 import com.runningmate.server.domain.watch.repository.WatchListRepository;
 import com.runningmate.server.global.common.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.beans.Transient;
 import java.util.List;
 
 import static com.runningmate.server.global.common.response.status.BaseExceptionResponseStatus.*;
@@ -35,26 +33,25 @@ public class WatchListService {
                 .orElseThrow(() ->
                     new EntityNotFoundException(USER_NOT_FOUND)
                 );
+        
         Politician politician = politicianRepository.findById(politicianId)
                 .orElseThrow(() -> new EntityNotFoundException(POLITICIAN_NOT_FOUND));
 
-        UserWatchListId id = new UserWatchListId(userId, politicianId);
 
-        if (!watchListRepository.existsById(id)) {
-            watchListRepository.save(UserWatchList.builder()
-                                    .id(id)
-                                    .user(user)
-                                    .politician(politician)
-                                    .build());
+        if (watchListRepository.existsByUserIdAndPoliticianId(userId, politicianId)) {
+           throw new AlreadyLikedException(DUPLICATE_WATCHING_POLITICIAN);
         }
 
-        return new AddWatchListResponse(politicianId);
+        UserWatchList save = watchListRepository.save(UserWatchList.builder()
+                .user(user)
+                .politician(politician)
+                .build());
+
+        return new AddWatchListResponse(save.getId());
     }
 
     public AddWatchListResponse unfollowPolitician(Long userId, Long politicianId){
-        UserWatchListId id = new UserWatchListId(userId, politicianId);
-
-        watchListRepository.deleteById(id);
+        watchListRepository.deleteByUserIdAndPoliticianId(userId, politicianId);
         return new AddWatchListResponse(politicianId);
     }
 
