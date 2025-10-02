@@ -4,6 +4,7 @@ import com.runningmate.server.domain.politicians.dto.external.candidateinfo.Cand
 import com.runningmate.server.domain.politicians.dto.external.candidateinfo.CandidateResponse;
 import com.runningmate.server.domain.politicians.dto.external.common.CommonApiResponse;
 import com.runningmate.server.domain.politicians.dto.external.electioncode.ElectionCodeItem;
+import com.runningmate.server.domain.politicians.exception.ExternalApiNotAvailableException;
 import com.runningmate.server.domain.politicians.utils.JsonParserUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
+import static com.runningmate.server.global.common.response.status.BaseExceptionResponseStatus.EXTERNAL_API_NOT_AVAILABLE;
 
 @Slf4j
 @Component
@@ -33,46 +35,49 @@ public class CandidateApiClient {
         List<CandidateItem> results = new ArrayList<>();
         boolean hasMoreData = true;
 
-        while(hasMoreData) {
+        try{
+            while(hasMoreData) {
 
-            // HTTP 헤더 설정
-            URI uri = UriComponentsBuilder
-                    .fromUriString(baseUrl)
-                    .path("/getPofelcddRegistSttusInfoInqire")
-                    .queryParam("ServiceKey", publicDataKey)
-                    .queryParam("sgId", electionCode) //20220601
-                    .queryParam("sgTypecode", type) // 8
-                    .queryParam("pageNo", pageNo)
-                    .queryParam("numOfRows", 100)
-                    .queryParam("resultType", "json")
-                    .build(true)
-                    .toUri();
+                // HTTP 헤더 설정
+                URI uri = UriComponentsBuilder
+                        .fromUriString(baseUrl)
+                        .path("/getPofelcddRegistSttusInfoInqire")
+                        .queryParam("ServiceKey", publicDataKey)
+                        .queryParam("sgId", electionCode) //20220601
+                        .queryParam("sgTypecode", type) // 8
+                        .queryParam("pageNo", pageNo)
+                        .queryParam("numOfRows", 100)
+                        .queryParam("resultType", "json")
+                        .build(true)
+                        .toUri();
 
-            // 요청
-            ResponseEntity<String> responseEntity = restClient.get()
-                    .uri(uri)
-                    .retrieve()
-                    .toEntity(String.class);
+                // 요청
+                ResponseEntity<String> responseEntity = restClient.get()
+                        .uri(uri)
+                        .retrieve()
+                        .toEntity(String.class);
 
-            String responseBody = responseEntity.getBody();
+                String responseBody = responseEntity.getBody();
 //            log.info("candidate. {}", responseBody);
 
-            // Json을 객체로 변환
-            //CandidateApiResponse response2 = getCandidateApiResponse(responseBody);
-            CommonApiResponse<CandidateResponse> response2 = JsonParserUtil.parseJson(responseBody, CandidateResponse.class);
+                // Json을 객체로 변환
+                //CandidateApiResponse response2 = getCandidateApiResponse(responseBody);
+                CommonApiResponse<CandidateResponse> response2 = JsonParserUtil.parseJson(responseBody, CandidateResponse.class);
 
 
-            if (response2.getResponse() != null && response2.getResponse().getBody() != null) { // code
-                results.addAll(response2.getResponse().getBody().getItems().getItemList());
-                pageNo++;
-            } else {
-                hasMoreData = false;
+                if (response2.getResponse() != null && response2.getResponse().getBody() != null) { // code
+                    results.addAll(response2.getResponse().getBody().getItems().getItemList());
+                    pageNo++;
+                } else {
+                    hasMoreData = false;
+                }
+
+//              log.info("{}", responseEntity);
             }
-
-
-//            log.info("{}", responseEntity);
         }
-
+        catch(Exception e){
+            throw new ExternalApiNotAvailableException(EXTERNAL_API_NOT_AVAILABLE);
+        }
 //        log.info("results size = {}", results.size());
 
         return results;
