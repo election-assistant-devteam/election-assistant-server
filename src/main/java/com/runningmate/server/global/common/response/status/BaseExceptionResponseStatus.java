@@ -29,6 +29,7 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
     INTERNAL_SERVER_ERROR(50000, "서버 내부 오류입니다."),
 
     // 외부 api 파싱 에러
+    EXTERNAL_API_NOT_AVAILABLE(50300, "외부 API를 이용할 수 없습니다."),
 
     // 토큰 검증 관련 에러
     TOKEN_AUTHENTICATION_FAILED(40100, "토큰 인증에 실패했습니다."),
