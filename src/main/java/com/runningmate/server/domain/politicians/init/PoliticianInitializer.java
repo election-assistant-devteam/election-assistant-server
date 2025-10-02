@@ -18,11 +18,16 @@ public class PoliticianInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args){
-        politicianInfoService.savePoliticianInfos();
-        log.info("기본 저장 완료");
+        try{
+            politicianInfoService.savePoliticianInfos();
+            log.info("기본 저장 완료");
 
-        nationalAssemblyService.saveMemberImg();
-        log.info("정치인 사진 저장 완료");
+            nationalAssemblyService.saveMemberImg();
+            log.info("정치인 사진 저장 완료");
+        }
+        catch(Exception e){
+            log.error("API 호출 실패 {}", e.getMessage());
+        }
     }
 
 }
